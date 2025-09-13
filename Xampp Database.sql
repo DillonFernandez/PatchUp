@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 13, 2025 at 06:31 PM
+-- Generation Time: Sep 13, 2025 at 06:34 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -335,8 +335,8 @@ INSERT INTO `potholereport` (`ReportID`, `UserID`, `Description`, `SeverityLevel
 (25, 7, 'Damaged road section on Kandy city main street.', 'Critical', '/patchup_app/uploads/img_68a6bdea05c06_1000071859.jpg', '2025-08-19 11:45:55', 'Resolved', 'Uva Province', 6.991944, 81.056111),
 (26, 20, 'Pothole on Galle Road, Colombo near residential area.', 'Small', '/patchup_app/uploads/img_68a6bdea05c06_1000071859.jpg', '2025-08-20 11:12:10', 'Reported', 'North Western Province', 7.338242, 80.518707),
 (27, 20, 'Pothole on Anuradhapura main road close to temple area.', 'Moderate', '/patchup_app/uploads/img_68a6bdea05c06_1000071859.jpg', '2025-08-21 15:34:29', 'Reported', 'Northern Province', 8.587634, 80.532852),
-(28, 1, 'Pothole on Kandana Station Road near Food City.', 'Small', '/patchup_app/uploads/img_68a6bdea05c06_1000071859.jpg', '2025-08-23 23:04:24', 'Resolved', 'Western Province', 7.047445, 79.899384),
-(29, 1, 'Moderate pothole near the commercial complex on Main Road.', 'Moderate', '/patchup_app/uploads/img_68a6bdea05c06_1000071859.jpg', '2025-08-23 23:51:51', 'In Progress', 'Western Province', 7.047541, 79.899443);
+(28, 1, 'Pothole on Kandana Station Road near Food City.', 'Small', '/patchup_app/uploads/img_68a2b14740aed_1d604240-4025-4927-89b3-cdbebeed08a96790438847307314099.jpg', '2025-08-23 23:04:24', 'Resolved', 'Western Province', 7.047445, 79.899384),
+(29, 1, 'Moderate pothole near the commercial complex on Main Road.', 'Moderate', '/patchup_app/uploads/img_68a2a2b8e1139_69d786b5-a9a8-47a2-a383-4aad6023585c6346341258487748645.jpg', '2025-08-23 23:51:51', 'In Progress', 'Western Province', 7.047541, 79.899443);
 
 --
 -- Triggers `potholereport`
