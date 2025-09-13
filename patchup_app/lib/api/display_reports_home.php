@@ -1,11 +1,17 @@
 <?php
-// --- Include Database Connection ---
+
+/**
+ * API endpoint to fetch the latest 5 pothole reports for the home page.
+ * Returns report details along with the reporting user's name.
+ */
+
+// Connect to the database
 require_once("../database/db_connection.php");
 
-// --- Set JSON Response Header ---
+// Set response header for JSON
 header('Content-Type: application/json');
 
-// --- Prepare SQL Query to Fetch Latest 5 Pothole Reports with User Names ---
+// Fetch latest 5 pothole reports with user names
 $sql = "SELECT p.*, u.Name AS UserName
         FROM potholereport p
         LEFT JOIN user u ON p.UserID = u.UserID
@@ -13,7 +19,7 @@ $sql = "SELECT p.*, u.Name AS UserName
         LIMIT 5";
 $result = $conn->query($sql);
 
-// --- Collect Query Results into an Array ---
+// Collect query results into an array
 $reports = [];
 if ($result) {
     while ($row = $result->fetch_assoc()) {
@@ -21,8 +27,8 @@ if ($result) {
     }
 }
 
-// --- Output Reports as JSON ---
+// Output reports as JSON
 echo json_encode($reports);
 
-// --- Close Database Connection ---
+// Close the database connection
 $conn->close();

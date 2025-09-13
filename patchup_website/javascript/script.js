@@ -1,5 +1,10 @@
+/**
+ * Main site JavaScript
+ * Handles login form submission and mobile navigation menu toggling.
+ */
+
 document.addEventListener("DOMContentLoaded", function () {
-  // Login Page
+  // Handle login form submission and display feedback
   const form = document.getElementById("loginForm");
   const messageDiv = document.getElementById("loginMessage");
   if (form && messageDiv) {
@@ -34,7 +39,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Navigation Menu Toggle for Mobile
+  // Toggle mobile navigation sidebar and overlay
   const menuToggle = document.getElementById("menuToggle");
   const sidebar = document.getElementById("sidebar");
   const overlay = document.getElementById("overlay");

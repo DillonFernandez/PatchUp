@@ -1,18 +1,22 @@
 <?php
+
+/**
+ * API endpoint for user login.
+ * Verifies email and password, returns success or error message.
+ */
+
 // Set response type to JSON
 header("Content-Type: application/json");
 
 // Include database connection
 include_once("../database/db_connection.php");
 
-// Parse incoming JSON request data
+// Parse and validate input
 $data = json_decode(file_get_contents("php://input"), true);
-
-// Extract email and password from request
 $email = $data["Email"] ?? '';
 $password = $data["PasswordHash"] ?? '';
 
-// Validate required fields
+// Check for missing fields
 if (!$email || !$password) {
     echo json_encode(["success" => false, "message" => "Missing fields"]);
     exit;

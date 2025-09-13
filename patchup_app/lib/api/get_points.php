@@ -1,19 +1,23 @@
 <?php
-// Set response type to JSON and include database connection
+
+/**
+ * API endpoint to fetch the points for a user by email.
+ * Returns 0 points if email is missing or user not found.
+ */
+
 header("Content-Type: application/json");
 include_once("../database/db_connection.php");
 
-// Parse input and extract email
+// Parse and validate input
 $data = json_decode(file_get_contents("php://input"), true);
 $email = $data["Email"] ?? '';
 
-// Validate email input, return 0 points if missing
 if (!$email) {
     echo json_encode(["points" => 0]);
     exit;
 }
 
-// Query to fetch user points by email
+// Fetch user points by email
 $stmt = $conn->prepare("SELECT Points FROM user WHERE LOWER(Email) = LOWER(?)");
 $stmt->bind_param("s", $email);
 $stmt->execute();
@@ -26,6 +30,6 @@ if ($stmt->fetch()) {
     echo json_encode(["points" => 0]);
 }
 
-// Close statement and database connection
+// Close resources
 $stmt->close();
 $conn->close();

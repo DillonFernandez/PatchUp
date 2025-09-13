@@ -1,14 +1,18 @@
 <?php
+
+/**
+ * API endpoint for user registration.
+ * Validates input, checks for duplicates, enforces password rules, and creates a new user.
+ */
+
 // Set response type to JSON
 header("Content-Type: application/json");
 
 // Include database connection
 include_once("../database/db_connection.php");
 
-// Parse incoming JSON request data
+// Parse and sanitize input
 $data = json_decode(file_get_contents("php://input"), true);
-
-// Extract and sanitize user input
 $name = trim($data["Name"] ?? '');
 $email = trim($data["Email"] ?? '');
 $password = $data["PasswordHash"] ?? '';
@@ -25,7 +29,7 @@ if (!$email || !preg_match("/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/",
     exit;
 }
 
-// Check if email is already registered (case-insensitive)
+// Check if email is already registered
 $stmt = $conn->prepare("SELECT 1 FROM user WHERE LOWER(Email) = LOWER(?)");
 $stmt->bind_param("s", $email);
 $stmt->execute();
@@ -80,6 +84,6 @@ if ($stmt->execute()) {
     echo json_encode(["success" => false, "message" => $conn->error]);
 }
 
-// Close statement and database connection
+// Close resources
 $stmt->close();
 $conn->close();

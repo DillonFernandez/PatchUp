@@ -1,5 +1,12 @@
 <?php
-// Section: Session Handling and Authentication Redirect
+
+/**
+ * Customer Reports Page
+ * Displays all pothole reports submitted by a specific customer,
+ * including filter controls, heatmap visualization, and report grid.
+ */
+
+// Session handling and admin authentication
 session_start();
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
     header("Location: login.php");
@@ -16,7 +23,7 @@ if (!$userid) {
 <html lang="en">
 
 <head>
-    <!-- Section: Meta, Styles, and Scripts -->
+    <!-- Meta, styles, and external scripts -->
     <meta charset="UTF-8">
     <title>Patch | <?php echo $name ? $name : 'Customer'; ?>'s Reports</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,66 +32,182 @@ if (!$userid) {
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
 </head>
 
 <body class="bg-gray-100 min-h-screen flex flex-col">
-    <!-- Section: Header (No Sidebar) -->
-    <header class="bg-white px-6 py-4 flex items-center justify-between border-b shadow-sm w-full">
-        <a href="view_customers.php">
-            <button type="button" class="flex items-center justify-center px-2 py-1.5 rounded bg-[#04274B] text-white hover:bg-[#06477B] transition" title="Back to Customers">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                </svg>
-            </button>
-        </a>
-        <h1 class="text-xl md:text-2xl font-bold text-[#04274B] text-center flex-1">
-            <?php echo $name ? $name : 'Customer'; ?>'s Reports
-        </h1>
-        <div class="w-10"></div>
-    </header>
-    <main class="flex-1 bg-gray-50 min-h-screen overflow-x-hidden">
-        <section class="w-full mx-auto px-[30px] py-[30px] sm:px-4 md:px-10 md:py-10 rounded-[20px]">
-            <div class="max-w-7xl mx-auto rounded-[15px]">
-                <!-- Section: Filter Form -->
-                <form id="filterForm" class="manage-re-filter-form flex flex-col sm:flex-row sm:items-end gap-4 sm:gap-6 rounded-[15px]">
-                    <div class="flex flex-row gap-2 w-full sm:w-auto rounded-[15px]">
-                        <div class="w-1/2 sm:w-auto rounded-[10px]">
-                            <label class="manage-re-filter-label rounded-[10px]">Status</label>
-                            <select name="status" id="statusFilter" class="manage-re-filter-select w-full sm:w-auto rounded-[10px]">
-                                <option value="All">All</option>
-                                <option value="Reported">Reported</option>
-                                <option value="In Progress">In Progress</option>
-                                <option value="Resolved">Resolved</option>
-                            </select>
-                        </div>
-                        <div class="w-1/2 sm:w-auto rounded-[10px]">
-                            <label class="manage-re-filter-label rounded-[10px]">Severity</label>
-                            <select name="severity" id="severityFilter" class="manage-re-filter-select w-full sm:w-auto rounded-[10px]">
-                                <option value="All">All</option>
-                                <option value="Small">Small</option>
-                                <option value="Moderate">Moderate</option>
-                                <option value="Critical">Critical</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="flex flex-row gap-2 w-full sm:w-auto rounded-[15px]">
-                        <button type="submit" class="manage-re-filter-btn w-1/2 sm:w-auto rounded-[10px]">Filter</button>
-                        <button type="button" id="resetBtn" class="manage-re-filter-btn w-1/2 sm:w-auto bg-gray-300 text-white hover:bg-gray-400 border-none rounded-[10px]">Reset</button>
-                    </div>
-                </form>
-                <!-- Section: Heatmap -->
-                <div class="mt-6 mb-8 rounded-[15px]">
-                    <div id="heatmap" style="height: 400px; width: 100%; border-radius: 20px; overflow: hidden; box-shadow: 0 2px 8px #0001;"></div>
-                </div>
-                <div id="reportsGrid" class="manage-re-grid rounded-[15px]">
-                    <!-- Reports will be loaded here via JS -->
+    <!-- Header navigation -->
+    <header class="bg-white px-4 sm:px-6 py-4 border-b border-gray-200 shadow-sm w-full">
+        <div class="flex items-center justify-between max-w-7xl mx-auto">
+            <div class="flex items-center space-x-4">
+                <a href="view_customers.php">
+                    <button type="button"
+                        class="flex items-center justify-center px-3 py-2 rounded-lg bg-[#04274B] text-white hover:bg-[#063366] transition-colors shadow-sm"
+                        title="Back to Customers">
+                        <span data-feather="arrow-left" class="w-4 h-4 mr-2"></span>
+                        <span class="hidden sm:inline">Back</span>
+                    </button>
+                </a>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-bold text-[#04274B]">
+                        <?php echo $name ? $name : 'Customer'; ?>'s Reports
+                    </h1>
+                    <nav class="flex text-sm text-gray-500 space-x-2" aria-label="Breadcrumb">
+                        <a href="index.php" class="hover:text-[#04274B]">Dashboard</a>
+                        <span>/</span>
+                        <a href="view_customers.php" class="hover:text-[#04274B]">Customers</a>
+                        <span>/</span>
+                        <span class="text-gray-800 font-medium"><?php echo $name ? $name : 'Customer'; ?></span>
+                    </nav>
                 </div>
             </div>
+            <div class="flex items-center space-x-3">
+                <div class="hidden sm:flex items-center space-x-2 bg-gray-50 px-3 py-2 rounded-lg">
+                    <span data-feather="user" class="w-4 h-4 text-gray-500"></span>
+                    <span class="text-sm text-gray-600">Customer Reports</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 bg-gray-50 min-h-screen overflow-x-hidden">
+        <section class="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
+
+            <!-- Page header -->
+            <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                <div class="flex items-center space-x-3 mb-2">
+                    <span data-feather="file-text" class="w-6 h-6 text-[#04274B]"></span>
+                    <h2 class="text-xl font-semibold text-gray-800">Reports by <?php echo $name ? $name : 'Customer'; ?></h2>
+                </div>
+                <p class="text-gray-600">View all reports submitted by this customer with interactive heatmap visualization.</p>
+            </div>
+
+            <!-- Filter controls for reports -->
+            <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                <div class="flex items-center space-x-2 mb-4">
+                    <span data-feather="filter" class="w-5 h-5 text-gray-500"></span>
+                    <h3 class="text-lg font-semibold text-gray-800">Filter Reports</h3>
+                </div>
+                <form id="filterForm" class="space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="space-y-2">
+                            <label class="block text-sm font-semibold text-gray-700">Status</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                                    <span data-feather="activity" class="w-4 h-4"></span>
+                                </span>
+                                <select name="status" id="statusFilter" class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-50 focus:border-[#04274B] transition-all outline-none bg-gray-50 hover:bg-white">
+                                    <option value="All">All Status</option>
+                                    <option value="Reported">Reported</option>
+                                    <option value="In Progress">In Progress</option>
+                                    <option value="Resolved">Resolved</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-sm font-semibold text-gray-700">Severity</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                                    <span data-feather="alert-circle" class="w-4 h-4"></span>
+                                </span>
+                                <select name="severity" id="severityFilter" class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-50 focus:border-[#04274B] transition-all outline-none bg-gray-50 hover:bg-white">
+                                    <option value="All">All Severity</option>
+                                    <option value="Small">Small</option>
+                                    <option value="Moderate">Moderate</option>
+                                    <option value="Critical">Critical</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-sm font-semibold text-gray-700">Province</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                                    <span data-feather="map-pin" class="w-4 h-4"></span>
+                                </span>
+                                <select name="province" id="provinceFilter" class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-50 focus:border-[#04274B] transition-all outline-none bg-gray-50 hover:bg-white">
+                                    <option value="All">All Provinces</option>
+                                    <option value="Central Province">Central Province</option>
+                                    <option value="Eastern Province">Eastern Province</option>
+                                    <option value="North Central Province">North Central Province</option>
+                                    <option value="Northern Province">Northern Province</option>
+                                    <option value="North Western Province">North Western Province</option>
+                                    <option value="Sabaragamuwa Province">Sabaragamuwa Province</option>
+                                    <option value="Southern Province">Southern Province</option>
+                                    <option value="Uva Province">Uva Province</option>
+                                    <option value="Western Province">Western Province</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-sm font-semibold text-gray-700">Actions</label>
+                            <div class="flex space-x-2">
+                                <button type="submit"
+                                    class="flex-1 flex items-center justify-center space-x-2 py-3 px-4 rounded-xl bg-[#04274B] text-white font-semibold hover:bg-[#063366] transition-colors shadow-sm">
+                                    <span data-feather="search" class="w-4 h-4"></span>
+                                    <span>Filter</span>
+                                </button>
+                                <button type="button" id="resetBtn"
+                                    class="flex items-center justify-center px-4 py-3 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors">
+                                    <span data-feather="refresh-cw" class="w-4 h-4"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Heatmap visualization for customer reports -->
+            <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center space-x-2">
+                        <span data-feather="map" class="w-5 h-5 text-gray-500"></span>
+                        <h3 class="text-lg font-semibold text-gray-800">Customer Heatmap</h3>
+                    </div>
+                    <div class="flex items-center space-x-4 text-sm">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                            <span class="text-gray-600">Critical</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                            <span class="text-gray-600">Moderate</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                            <span class="text-gray-600">Small</span>
+                        </div>
+                    </div>
+                </div>
+                <div id="heatmap" class="w-full h-96 rounded-xl overflow-hidden border border-gray-200"></div>
+            </div>
+
+            <!-- Reports grid listing all reports -->
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                <div class="p-6 border-b border-gray-200">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-2">
+                            <span data-feather="grid" class="w-5 h-5 text-gray-500"></span>
+                            <h3 class="text-lg font-semibold text-gray-800">Reports List</h3>
+                        </div>
+                        <div class="text-sm text-gray-500">
+                            <span data-feather="info" class="w-4 h-4 inline mr-1"></span>
+                            View report details
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div id="reportsGrid" class="grid gap-6 grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
+                        <!-- Reports will be loaded here via JS -->
+                    </div>
+                </div>
+            </div>
+
         </section>
     </main>
+
     <script src="javascript/script.js"></script>
     <script>
-        // Section: Leaflet Heatmap Setup
+        // Initialize Leaflet heatmap for customer reports
         let map, heatCritical, heatModerate, heatSmall;
 
         function initMap() {
@@ -133,6 +256,7 @@ if (!$userid) {
             map.setMaxBounds(sriLankaBounds);
         }
 
+        // Update heatmap data based on report severity
         function updateHeatmap(data) {
             if (!map) initMap();
             const critical = [],
@@ -151,69 +275,92 @@ if (!$userid) {
             heatModerate.setLatLngs(moderate);
             heatSmall.setLatLngs(small);
         }
-        // Section: Fetch and Render Reports + Heatmap
+
+        // Fetch and render reports and heatmap based on filters
         function fetchReports() {
             const status = document.getElementById('statusFilter').value;
             const severity = document.getElementById('severityFilter').value;
+            const province = document.getElementById('provinceFilter').value;
             const userid = <?php echo json_encode($userid); ?>;
-            fetch(`api/view_customers.php?action=reports&userid=${encodeURIComponent(userid)}&status=${encodeURIComponent(status)}&severity=${encodeURIComponent(severity)}`)
+            fetch(`api/view_customers.php?action=reports&userid=${encodeURIComponent(userid)}&status=${encodeURIComponent(status)}&severity=${encodeURIComponent(severity)}&province=${encodeURIComponent(province)}`)
                 .then(res => res.json())
                 .then(data => {
                     updateHeatmap(data.reports || []);
                     const grid = document.getElementById('reportsGrid');
                     grid.innerHTML = '';
                     if (!data.reports || !data.reports.length) {
-                        grid.innerHTML = '<div class="col-span-full text-center text-gray-500 py-12 bg-white rounded-[20px] shadow-sm border border-gray-100">No reports found.</div>';
+                        grid.innerHTML = `
+                            <div class="col-span-full text-center text-gray-500 py-12 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
+                                <div class="flex flex-col items-center space-y-2">
+                                    <span data-feather="inbox" class="w-12 h-12 text-gray-300"></span>
+                                    <p class="text-lg font-medium">No reports found</p>
+                                    <p class="text-sm">This customer hasn't submitted any reports yet</p>
+                                </div>
+                            </div>
+                        `;
+                        feather.replace();
                         return;
                     }
                     data.reports.forEach(report => {
-                        const sevClass = report.SeverityLevel === 'Critical' ? 'bg-red-100 text-red-700' :
-                            report.SeverityLevel === 'Moderate' ? 'bg-yellow-100 text-yellow-700' :
-                            'bg-green-100 text-green-700';
+                        const sevClass = report.SeverityLevel === 'Critical' ? 'bg-red-50 text-red-700 border-red-200' :
+                            report.SeverityLevel === 'Moderate' ? 'bg-yellow-50 text-yellow-700 border-yellow-200' :
+                            'bg-green-50 text-green-700 border-green-200';
+                        const statusClass = report.Status === 'Resolved' ? 'bg-green-100 text-green-800' :
+                            report.Status === 'In Progress' ? 'bg-blue-100 text-blue-800' :
+                            'bg-gray-100 text-gray-800';
                         const img = report.ImageURL ?
-                            `<img src="${report.ImageURL}" alt="Pothole Image" class="object-cover w-full h-full rounded-[10px]">` :
-                            `<span class="manage-re-no-img rounded-[10px]">No Image</span>`;
+                            `<img src="${report.ImageURL}" alt="Pothole Image" class="object-cover w-full h-32 rounded-lg">` :
+                            `<div class="w-full h-32 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400"><span data-feather="image" class="w-8 h-8"></span></div>`;
                         grid.innerHTML += `
-<div class="manage-re-card rounded-[20px]">
-    <div class="manage-re-card-inner rounded-[15px]">
-        <div class="manage-re-card-header rounded-[15px]">
-            <span class="text-xs text-gray-400 font-mono rounded-[10px]">#${report.ReportID}</span>
-            <span class="manage-re-status-badge ${sevClass} rounded-[10px]">
+<div class="bg-white border border-gray-200 rounded-xl p-5 hover:shadow-md transition-shadow">
+    <div class="flex items-start justify-between mb-4">
+        <div class="flex items-center space-x-2">
+            <span class="text-xs text-gray-500 font-mono bg-gray-100 px-2 py-1 rounded">#${report.ReportID}</span>
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${sevClass}">
                 ${report.SeverityLevel}
             </span>
         </div>
-        <div class="manage-re-img-wrap rounded-[15px]">
-            ${img}
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusClass}">
+            ${report.Status}
+        </span>
+    </div>
+    
+    ${img}
+    
+    <div class="mt-4 space-y-3">
+        <div class="flex items-start space-x-2">
+            <span data-feather="file-text" class="w-4 h-4 text-gray-400 mt-0.5"></span>
+            <p class="text-sm text-gray-600 line-clamp-2">${report.Description || '<span class="italic text-gray-400">(No description)</span>'}</p>
         </div>
-        <div class="manage-re-card-section rounded-[15px]">
-            <span class="manage-re-label rounded-[10px]">Status:</span>
-            <span class="manage-re-value rounded-[10px]">${report.Status}</span>
+        
+        <div class="flex items-center space-x-2">
+            <span data-feather="map-pin" class="w-4 h-4 text-gray-400"></span>
+            <span class="text-sm text-gray-600">${report.Province}</span>
         </div>
-        <div class="manage-re-card-section rounded-[15px]">
-            <span class="manage-re-label rounded-[10px]">Description:</span>
-            <span class="manage-re-value rounded-[10px]">${report.Description || '<span class="italic text-gray-400">(No description)</span>'}</span>
+        
+        <div class="flex items-center space-x-2">
+            <span data-feather="navigation" class="w-4 h-4 text-gray-400"></span>
+            <span class="text-sm text-gray-600">Lat: ${report.Latitude}, Lng: ${report.Longitude}</span>
         </div>
-        <div class="manage-re-card-section rounded-[15px]">
-            <span class="manage-re-label rounded-[10px]">Zip Code:</span>
-            <span class="manage-re-value rounded-[10px]">${report.ZipCode}</span>
+        
+        <div class="flex items-center space-x-2">
+            <span data-feather="clock" class="w-4 h-4 text-gray-400"></span>
+            <span class="text-xs text-gray-500">${report.Timestamp}</span>
         </div>
-        <div class="manage-re-card-section rounded-[15px]">
-            <span class="manage-re-label rounded-[10px]">Location:</span>
-            <span class="manage-re-value rounded-[10px]">Lat: ${report.Latitude}, Lng: ${report.Longitude}</span>
-        </div>
-        <div class="flex justify-between items-center mt-2 rounded-[15px]">
-            <div class="manage-re-timestamp rounded-[10px]">
-                ${report.Timestamp}
-            </div>
-            <a href="https://www.google.com/maps?q=${report.Latitude},${report.Longitude}" target="_blank"
-               class="text-blue-600 text-sm underline hover:text-blue-800 rounded-[10px]">
-                View on Google Maps
-            </a>
-        </div>
+    </div>
+    
+    <div class="mt-4 pt-3 border-t border-gray-100">
+        <a href="https://www.google.com/maps?q=${report.Latitude},${report.Longitude}" target="_blank"
+           class="inline-flex items-center space-x-1 text-blue-600 text-sm hover:text-blue-800 transition-colors">
+            <span data-feather="external-link" class="w-4 h-4"></span>
+            <span>View on Map</span>
+        </a>
     </div>
 </div>
 `;
                     });
+                    // Re-initialize feather icons for new content
+                    feather.replace();
                 });
         }
         document.getElementById('filterForm').onsubmit = function(e) {
@@ -224,11 +371,13 @@ if (!$userid) {
             e.preventDefault();
             document.getElementById('statusFilter').value = 'All';
             document.getElementById('severityFilter').value = 'All';
+            document.getElementById('provinceFilter').value = 'All';
             fetchReports();
         };
-        // Section: Initial load
+        // Initial page load: setup map, fetch reports, and icons
         initMap();
         fetchReports();
+        feather.replace();
     </script>
 </body>
 

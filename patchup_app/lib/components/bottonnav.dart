@@ -1,3 +1,8 @@
+//
+// NavigationExample: Main bottom navigation bar for app-wide navigation.
+// Handles switching between Home, Reports, Leaderboard, and Profile.
+//
+
 import 'package:flutter/material.dart';
 
 import '../localization/app_localizations.dart';
@@ -6,7 +11,7 @@ import '../pages/home.dart';
 import '../pages/leaderboard.dart';
 import '../pages/reports.dart';
 
-// Bottom navigation bar widget for main app navigation
+// Bottom navigation bar widget
 class NavigationExample extends StatefulWidget {
   const NavigationExample({super.key});
 
@@ -14,17 +19,17 @@ class NavigationExample extends StatefulWidget {
   State<NavigationExample> createState() => _NavigationExampleState();
 }
 
-// State class for navigation logic and UI
+// State for navigation logic and UI
 class _NavigationExampleState extends State<NavigationExample> {
   int currentPageIndex = 0;
 
   @override
   Widget build(BuildContext context) {
-    // Navigation bar color definitions
+    // Color definitions for navigation bar
     const Color selectedColor = Color(0xFF04274B);
     const Color unselectedColor = Colors.grey;
 
-    // List of pages for navigation destinations
+    // List of pages for navigation
     final List<Widget> pages = [
       const HomePage(),
       const ReportsPage(),
@@ -34,7 +39,7 @@ class _NavigationExampleState extends State<NavigationExample> {
 
     final appLoc = AppLocalizations.of(context);
 
-    // Scaffold containing navigation bar and current page
+    // Scaffold with navigation bar and current page
     return Scaffold(
       backgroundColor: Colors.white,
       body: pages[currentPageIndex],
@@ -51,7 +56,7 @@ class _NavigationExampleState extends State<NavigationExample> {
         ),
         child: NavigationBarTheme(
           data: NavigationBarThemeData(
-            // Style for navigation bar labels
+            // Navigation bar label styles
             labelTextStyle: MaterialStateProperty.resolveWith<TextStyle>((
               Set<MaterialState> states,
             ) {
@@ -64,14 +69,14 @@ class _NavigationExampleState extends State<NavigationExample> {
           child: NavigationBar(
             backgroundColor: Colors.white,
             indicatorColor: selectedColor.withOpacity(0.1),
-            // Handle navigation destination selection
+            // Handle navigation selection
             onDestinationSelected: (int index) {
               setState(() {
                 currentPageIndex = index;
               });
             },
             selectedIndex: currentPageIndex,
-            // Define navigation destinations
+            // Navigation destinations
             destinations: <Widget>[
               NavigationDestination(
                 selectedIcon: Icon(Icons.home, color: selectedColor),

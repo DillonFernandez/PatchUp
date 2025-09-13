@@ -1,25 +1,30 @@
+//
+// AppLocalizations: Handles loading and providing localized strings for the app.
+// Supports English, Sinhala, and Tamil languages.
+//
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-// Localization class for handling translations
+// Loads and provides localized strings for the current locale
 class AppLocalizations {
   final Locale locale;
   late Map<String, String> _localizedStrings;
 
   AppLocalizations(this.locale);
 
-  // Localization delegate for Flutter localization system
+  // Delegate for Flutter localization system
   static const LocalizationsDelegate<AppLocalizations> delegate =
       _AppLocalizationsDelegate();
 
-  // Accessor for localization instance in widget tree
+  // Gets localization instance from widget tree
   static AppLocalizations of(BuildContext context) {
     return Localizations.of<AppLocalizations>(context, AppLocalizations)!;
   }
 
-  // Load language JSON file and parse translations
+  // Loads language JSON file and parses translations
   Future<bool> load() async {
     final langCode = locale.languageCode;
     final path =
@@ -36,13 +41,13 @@ class AppLocalizations {
     return true;
   }
 
-  // Translate a key to the localized string
+  // Translates a key to the localized string
   String translate(String key) {
     return _localizedStrings[key] ?? key;
   }
 }
 
-// Delegate class for localization loading and support
+// Delegate for loading and supporting localizations
 class _AppLocalizationsDelegate
     extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();
@@ -52,7 +57,7 @@ class _AppLocalizationsDelegate
   bool isSupported(Locale locale) =>
       ['en', 'si', 'ta'].contains(locale.languageCode);
 
-  // Load localization for given locale
+  // Loads localization for the given locale
   @override
   Future<AppLocalizations> load(Locale locale) async {
     var localizations = AppLocalizations(locale);

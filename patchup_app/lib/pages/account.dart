@@ -1,3 +1,7 @@
+//
+// AccountPage: Displays user info, points, quick actions, settings, and account actions.
+//
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -13,7 +17,6 @@ import 'my_badges.dart';
 import 'my_reports.dart';
 import 'terms_conditions.dart';
 
-// Account page widget for user profile and settings
 class AccountPage extends StatefulWidget {
   const AccountPage({super.key});
 
@@ -21,8 +24,8 @@ class AccountPage extends StatefulWidget {
   State<AccountPage> createState() => _AccountPageState();
 }
 
-// State class for account page logic and UI
 class _AccountPageState extends State<AccountPage> {
+  // User info and state
   String userName = '';
   String userEmail = '';
   bool loading = true;
@@ -38,7 +41,7 @@ class _AccountPageState extends State<AccountPage> {
     _loadSelectedLanguage();
   }
 
-  // Fetch user info from backend or cache
+  // Fetches user info from backend or cache
   Future<void> _fetchUserInfo() async {
     final email = UserSession.email;
     if (email.isEmpty) {
@@ -49,7 +52,7 @@ class _AccountPageState extends State<AccountPage> {
       });
       return;
     }
-    final url = 'http://192.168.1.100/patchup_app/lib/api/get_user_info.php';
+    final url = 'http://192.168.1.2/patchup_app/lib/api/get_user_info.php';
     try {
       final response = await http.post(
         Uri.parse(url),
@@ -77,7 +80,7 @@ class _AccountPageState extends State<AccountPage> {
     }
   }
 
-  // Fetch user points from backend or cache
+  // Fetches user points from backend or cache
   Future<void> _fetchUserPoints() async {
     final email = UserSession.email;
     if (email.isEmpty) {
@@ -86,7 +89,7 @@ class _AccountPageState extends State<AccountPage> {
       });
       return;
     }
-    final url = 'http://192.168.1.100/patchup_app/lib/api/get_points.php';
+    final url = 'http://192.168.1.2/patchup_app/lib/api/get_points.php';
     try {
       final response = await http.post(
         Uri.parse(url),
@@ -108,7 +111,7 @@ class _AccountPageState extends State<AccountPage> {
     }
   }
 
-  // Logout user and clear session
+  // Logs out user and clears session
   Future<void> _logout(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('user_email');
@@ -120,64 +123,96 @@ class _AccountPageState extends State<AccountPage> {
     );
   }
 
-  // Show logout confirmation dialog
+  // Shows confirm logout dialog
   Future<void> _confirmLogout(BuildContext context) async {
     final appLoc = AppLocalizations.of(context);
     final shouldLogout = await showDialog<bool>(
       context: context,
       builder:
           (context) => AlertDialog(
-            backgroundColor: const Color(0xFF04274B),
+            backgroundColor: Colors.white,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(20),
             ),
-            title: Text(
-              appLoc.translate('Logout'),
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 22,
+            elevation: 24,
+            shadowColor: Colors.black.withOpacity(0.2),
+            title: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.red[50],
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(
+                    Icons.logout_rounded,
+                    color: Colors.red[600],
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  appLoc.translate('Logout'),
+                  style: TextStyle(
+                    fontWeight: FontWeight.w800,
+                    fontSize: 20,
+                    color: const Color(0xFF04274B),
+                    letterSpacing: 0.2,
+                  ),
+                ),
+              ],
+            ),
+            content: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: Text(
+                appLoc.translate('Are you sure you want to logout?'),
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Colors.grey[700],
+                  fontWeight: FontWeight.w500,
+                  height: 1.4,
+                ),
               ),
             ),
-            content: Text(
-              appLoc.translate('Are you sure you want to logout?'),
-              style: const TextStyle(color: Colors.white, fontSize: 16),
-            ),
+            actionsPadding: const EdgeInsets.fromLTRB(24, 0, 24, 20),
             actions: [
               TextButton(
+                onPressed: () => Navigator.pop(context, false),
                 style: TextButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  backgroundColor: const Color(0xFF0A4173),
+                  backgroundColor: Colors.grey[100],
+                  foregroundColor: Colors.grey[700],
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 12,
                   ),
                 ),
-                onPressed: () => Navigator.pop(context, false),
                 child: Text(
                   appLoc.translate('Cancel'),
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16,
-                  ),
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
                 ),
               ),
+              const SizedBox(width: 8),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
+                  backgroundColor: Colors.red[600],
+                  foregroundColor: Colors.white,
                   elevation: 0,
                   shadowColor: Colors.transparent,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 12,
+                  ),
                 ),
                 onPressed: () => Navigator.pop(context, true),
                 child: Text(
                   appLoc.translate('Logout'),
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 16,
-                  ),
+                  style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
                 ),
               ),
             ],
@@ -188,7 +223,7 @@ class _AccountPageState extends State<AccountPage> {
     }
   }
 
-  // Load selected language from preferences
+  // Loads selected language from preferences
   Future<void> _loadSelectedLanguage() async {
     final prefs = await SharedPreferences.getInstance();
     final langCode = prefs.getString('selected_language');
@@ -219,7 +254,7 @@ class _AccountPageState extends State<AccountPage> {
             ),
             Column(
               children: [
-                // User profile header
+                // Profile header section
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(
@@ -268,11 +303,12 @@ class _AccountPageState extends State<AccountPage> {
                     ],
                   ),
                 ),
+                // Main content section
                 Expanded(
                   child: Container(
                     width: double.infinity,
                     decoration: const BoxDecoration(
-                      color: Colors.white,
+                      color: Color(0xFFF8FAFC),
                       borderRadius: BorderRadius.vertical(
                         top: Radius.circular(36),
                       ),
@@ -285,140 +321,19 @@ class _AccountPageState extends State<AccountPage> {
                       ],
                     ),
                     child: SingleChildScrollView(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 28,
-                        vertical: 34,
-                      ),
+                      padding: const EdgeInsets.all(30),
                       child: Column(
                         children: [
-                          // My Reports card
-                          Card(
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(18),
-                            ),
-                            margin: EdgeInsets.zero,
-                            child: InkWell(
-                              borderRadius: BorderRadius.circular(18),
-                              onTap:
-                                  () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => MyReportsPage(),
-                                    ),
-                                  ),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 20,
-                                  horizontal: 18,
-                                ),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(18),
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      const Color(0xFF04274B).withOpacity(0.08),
-                                      Colors.white,
-                                    ],
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  ),
-                                ),
-                                child: Row(
-                                  children: [
-                                    const Icon(
-                                      Icons.assignment,
-                                      color: Color(0xFF04274B),
-                                      size: 28,
-                                    ),
-                                    const SizedBox(width: 18),
-                                    Text(
-                                      appLoc.translate('My Reports'),
-                                      style: const TextStyle(
-                                        color: Color(0xFF04274B),
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                    const Spacer(),
-                                    const Icon(
-                                      Icons.arrow_forward_ios,
-                                      color: Color(0xFFB3C2D6),
-                                      size: 18,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 22),
-                          // My Badges card
-                          Card(
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(18),
-                            ),
-                            margin: EdgeInsets.zero,
-                            child: InkWell(
-                              borderRadius: BorderRadius.circular(18),
-                              onTap:
-                                  () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => MyBadgesPage(),
-                                    ),
-                                  ),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 20,
-                                  horizontal: 18,
-                                ),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(18),
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      const Color(0xFF04274B).withOpacity(0.08),
-                                      Colors.white,
-                                    ],
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  ),
-                                ),
-                                child: Row(
-                                  children: [
-                                    const Icon(
-                                      Icons.emoji_events,
-                                      color: Color(0xFF04274B),
-                                      size: 28,
-                                    ),
-                                    const SizedBox(width: 18),
-                                    Text(
-                                      appLoc.translate('My Badges'),
-                                      style: const TextStyle(
-                                        color: Color(0xFF04274B),
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                    const Spacer(),
-                                    const Icon(
-                                      Icons.arrow_forward_ios,
-                                      color: Color(0xFFB3C2D6),
-                                      size: 18,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 22),
-                          // Language selection card
-                          _buildLanguageCard(),
-                          const SizedBox(height: 22),
-                          // Notifications toggle section
-                          _buildNotificationsSection(appLoc),
-                          const SizedBox(height: 22),
-                          // About, Terms, and Logout section
-                          _buildLogoutCard(context, appLoc),
+                          // Quick Actions Section
+                          _buildQuickActionsSection(context, appLoc),
+                          const SizedBox(height: 24),
+
+                          // Settings Section
+                          _buildSettingsSection(context, appLoc),
+                          const SizedBox(height: 24),
+
+                          // Account Actions Section
+                          _buildAccountActionsSection(context, appLoc),
                         ],
                       ),
                     ),
@@ -432,7 +347,7 @@ class _AccountPageState extends State<AccountPage> {
     );
   }
 
-  // Build user profile info section
+  // Builds profile info display
   Widget _buildProfileInfo() {
     final appLoc = AppLocalizations.of(context);
     return Column(
@@ -501,79 +416,536 @@ class _AccountPageState extends State<AccountPage> {
     );
   }
 
-  // Build language selection card
-  Widget _buildLanguageCard() {
-    final appLoc = AppLocalizations.of(context);
+  // Builds quick actions section (My Reports, My Badges)
+  Widget _buildQuickActionsSection(
+    BuildContext context,
+    AppLocalizations appLoc,
+  ) {
+    return Column(
+      children: [
+        // Section Header
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFF04274B), Color(0xFF1e40af)],
+            ),
+            borderRadius: BorderRadius.circular(14),
+            boxShadow: [
+              BoxShadow(
+                color: Color(0xFF04274B).withOpacity(0.12),
+                blurRadius: 10,
+                offset: Offset(0, 3),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  Icons.dashboard_rounded,
+                  color: Colors.white,
+                  size: 18,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      appLoc.translate('Quick Actions'),
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.white,
+                        letterSpacing: 0.2,
+                      ),
+                    ),
+                    Text(
+                      appLoc.translate('Access your data and achievements'),
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white.withOpacity(0.8),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 12),
+
+        // Quick Action Cards
+        Row(
+          children: [
+            Expanded(
+              child: _buildQuickActionCard(
+                context,
+                icon: Icons.assignment_rounded,
+                title: appLoc.translate('My Reports'),
+                subtitle: appLoc.translate('View submissions'),
+                gradient: [Colors.blue[50]!, Colors.blue[100]!],
+                iconColor: Colors.blue[700]!,
+                onTap:
+                    () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => MyReportsPage()),
+                    ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _buildQuickActionCard(
+                context,
+                icon: Icons.emoji_events_rounded,
+                title: appLoc.translate('My Badges'),
+                subtitle: appLoc.translate('View achievements'),
+                gradient: [Colors.amber[50]!, Colors.amber[100]!],
+                iconColor: Colors.amber[700]!,
+                onTap:
+                    () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => MyBadgesPage()),
+                    ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  // Quick action card builder
+  Widget _buildQuickActionCard(
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required List<Color> gradient,
+    required Color iconColor,
+    required VoidCallback onTap,
+  }) {
     return Container(
-      width: double.infinity,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.07),
-            blurRadius: 18,
-            offset: const Offset(0, 6),
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 10,
+            offset: Offset(0, 3),
           ),
         ],
       ),
-      child: Card(
-        color: Colors.white,
-        elevation: 0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-        margin: EdgeInsets.zero,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 22, horizontal: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  const Icon(Icons.language, color: Color(0xFF04274B)),
-                  const SizedBox(width: 10),
-                  Text(
-                    appLoc.translate('language'),
-                    style: const TextStyle(
-                      fontSize: 19,
-                      fontWeight: FontWeight.w700,
-                      color: Color(0xFF04274B),
-                      letterSpacing: 0.1,
-                    ),
-                  ),
-                ],
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(14),
+          onTap: onTap,
+          child: Container(
+            padding: EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: gradient,
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
-              const SizedBox(height: 14),
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildLanguageButton(
-                      langCode: 'en',
-                      label: appLoc.translate('English'),
-                    ),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Column(
+              children: [
+                Container(
+                  padding: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color: iconColor.withOpacity(0.2),
+                        blurRadius: 8,
+                        offset: Offset(0, 2),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: _buildLanguageButton(
-                      langCode: 'si',
-                      label: appLoc.translate('Sinhala'),
-                    ),
+                  child: Icon(icon, color: iconColor, size: 24),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF04274B),
                   ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: _buildLanguageButton(
-                      langCode: 'ta',
-                      label: appLoc.translate('Tamil'),
-                    ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  subtitle,
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: Colors.blueGrey[600],
+                    fontWeight: FontWeight.w500,
                   ),
-                ],
-              ),
-            ],
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  // Build language selection button
+  // Builds settings section (language, notifications)
+  Widget _buildSettingsSection(BuildContext context, AppLocalizations appLoc) {
+    return Column(
+      children: [
+        // Section Header
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFF04274B), Color(0xFF1e40af)],
+            ),
+            borderRadius: BorderRadius.circular(14),
+            boxShadow: [
+              BoxShadow(
+                color: Color(0xFF04274B).withOpacity(0.12),
+                blurRadius: 10,
+                offset: Offset(0, 3),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  Icons.settings_rounded,
+                  color: Colors.white,
+                  size: 18,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      appLoc.translate('Settings'),
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.white,
+                        letterSpacing: 0.2,
+                      ),
+                    ),
+                    Text(
+                      appLoc.translate('Customize your experience'),
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white.withOpacity(0.8),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 12),
+
+        // Settings Cards
+        _buildLanguageCard(),
+        const SizedBox(height: 16),
+        _buildNotificationsSection(appLoc),
+      ],
+    );
+  }
+
+  // Builds account actions section (About, Terms, Logout)
+  Widget _buildAccountActionsSection(
+    BuildContext context,
+    AppLocalizations appLoc,
+  ) {
+    return Column(
+      children: [
+        // Section Header
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFF04274B), Color(0xFF1e40af)],
+            ),
+            borderRadius: BorderRadius.circular(14),
+            boxShadow: [
+              BoxShadow(
+                color: Color(0xFF04274B).withOpacity(0.12),
+                blurRadius: 10,
+                offset: Offset(0, 3),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  Icons.account_circle_rounded,
+                  color: Colors.white,
+                  size: 18,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      appLoc.translate('Account'),
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.white,
+                        letterSpacing: 0.2,
+                      ),
+                    ),
+                    Text(
+                      appLoc.translate('Support and account options'),
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white.withOpacity(0.8),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 12),
+
+        // Account Action Cards
+        _buildAccountActionCard(
+          context,
+          icon: Icons.info_outline_rounded,
+          title: appLoc.translate('About & Contact Us'),
+          subtitle: appLoc.translate('Learn more about PatchUp'),
+          color: Colors.blue,
+          onTap:
+              () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => AboutContactUsPage()),
+              ),
+        ),
+        const SizedBox(height: 12),
+        _buildAccountActionCard(
+          context,
+          icon: Icons.description_outlined,
+          title: appLoc.translate('Terms and Conditions'),
+          subtitle: appLoc.translate('Read our terms of service'),
+          color: Colors.indigo,
+          onTap:
+              () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const TermsConditionsPage(),
+                ),
+              ),
+        ),
+        const SizedBox(height: 12),
+        _buildAccountActionCard(
+          context,
+          icon: Icons.logout_rounded,
+          title: appLoc.translate('Logout'),
+          subtitle: appLoc.translate('Sign out of your account'),
+          color: Colors.red,
+          onTap: () => _confirmLogout(context),
+        ),
+      ],
+    );
+  }
+
+  // Account action card builder
+  Widget _buildAccountActionCard(
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 10,
+            offset: Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(14),
+          onTap: onTap,
+          child: Padding(
+            padding: EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Container(
+                  padding: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(icon, color: color, size: 22),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xFF04274B),
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        subtitle,
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.blueGrey[600],
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  color: Colors.blueGrey[400],
+                  size: 16,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Builds language selection card
+  Widget _buildLanguageCard() {
+    final appLoc = AppLocalizations.of(context);
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 10,
+            offset: Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Color(0xFF04274B).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(
+                    Icons.language_rounded,
+                    color: Color(0xFF04274B),
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  appLoc.translate('language'),
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF04274B),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildLanguageButton(
+                    langCode: 'en',
+                    label: appLoc.translate('English'),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _buildLanguageButton(
+                    langCode: 'si',
+                    label: appLoc.translate('Sinhala'),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _buildLanguageButton(
+                    langCode: 'ta',
+                    label: appLoc.translate('Tamil'),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Language button builder
   Widget _buildLanguageButton({
     required String langCode,
     required String label,
@@ -594,201 +966,73 @@ class _AccountPageState extends State<AccountPage> {
         },
         style: TextButton.styleFrom(
           backgroundColor:
-              isSelected ? const Color(0xFFB3C2D6) : Colors.grey.shade100,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-            side: BorderSide(
-              color: isSelected ? const Color(0xFF04274B) : Colors.transparent,
-              width: 2,
-            ),
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              isSelected ? Color(0xFF04274B) : Colors.grey.shade100,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
         ),
         child: Text(
           label,
           style: TextStyle(
-            color: isSelected ? const Color(0xFF04274B) : Colors.black87,
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-            fontSize: 16,
-            letterSpacing: 0.1,
+            color: isSelected ? Colors.white : Colors.black87,
+            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+            fontSize: 13,
           ),
         ),
       ),
     );
   }
 
-  // Build notifications toggle section
+  // Builds notifications toggle section
   Widget _buildNotificationsSection(AppLocalizations appLoc) {
     return Container(
-      width: double.infinity,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(18),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.07),
-            blurRadius: 18,
-            offset: const Offset(0, 6),
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 10,
+            offset: Offset(0, 3),
           ),
         ],
       ),
-      child: Card(
-        color: Colors.white,
-        elevation: 0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-        margin: EdgeInsets.zero,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 22, horizontal: 20),
-          child: Row(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: const Color(0xFF04274B).withOpacity(0.10),
-                  shape: BoxShape.circle,
-                ),
-                padding: const EdgeInsets.all(10),
-                child: const Icon(
-                  Icons.notifications_active,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            Container(
+              padding: EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Color(0xFF04274B).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(
+                Icons.notifications_active_rounded,
+                color: Color(0xFF04274B),
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                appLoc.translate('Enable Notifications'),
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
                   color: Color(0xFF04274B),
                 ),
               ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Text(
-                  appLoc.translate('Enable Notifications'),
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xFF04274B),
-                  ),
-                ),
-              ),
-              Switch(
-                value: notificationsEnabled,
-                activeColor: const Color(0xFF04274B),
-                onChanged: (val) {
-                  setState(() {
-                    notificationsEnabled = val;
-                  });
-                },
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  // Build About, Terms, and Logout section
-  Widget _buildLogoutCard(BuildContext context, AppLocalizations appLoc) {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.07),
-            blurRadius: 18,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
-      child: Card(
-        color: Colors.white,
-        elevation: 0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-        margin: EdgeInsets.zero,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 22, horizontal: 20),
-          child: Column(
-            children: [
-              SizedBox(
-                width: double.infinity,
-                child: TextButton.icon(
-                  onPressed:
-                      () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => AboutContactUsPage(),
-                        ),
-                      ),
-                  icon: const Icon(
-                    Icons.info_outline,
-                    color: Color(0xFF5F6BFF),
-                  ),
-                  label: Text(
-                    appLoc.translate('About & Contact Us'),
-                    style: const TextStyle(
-                      color: Color(0xFF04274B),
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  style: TextButton.styleFrom(
-                    backgroundColor: const Color(0xFFF6F7FF),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12),
-              SizedBox(
-                width: double.infinity,
-                child: TextButton.icon(
-                  onPressed:
-                      () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const TermsConditionsPage(),
-                        ),
-                      ),
-                  icon: const Icon(
-                    Icons.description_outlined,
-                    color: Color(0xFF1E88E5),
-                  ),
-                  label: Text(
-                    appLoc.translate('Terms and Conditions'),
-                    style: const TextStyle(
-                      color: Color(0xFF04274B),
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  style: TextButton.styleFrom(
-                    backgroundColor: const Color(0xFFF6F7FF),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12),
-              SizedBox(
-                width: double.infinity,
-                child: TextButton.icon(
-                  onPressed: () => _confirmLogout(context),
-                  icon: const Icon(Icons.logout, color: Colors.red),
-                  label: Text(
-                    appLoc.translate('Logout'),
-                    style: const TextStyle(
-                      color: Colors.red,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  style: TextButton.styleFrom(
-                    backgroundColor: const Color(0xFFFFF0F0),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                  ),
-                ),
-              ),
-            ],
-          ),
+            ),
+            Switch(
+              value: notificationsEnabled,
+              activeColor: Color(0xFF04274B),
+              onChanged: (val) {
+                setState(() {
+                  notificationsEnabled = val;
+                });
+              },
+            ),
+          ],
         ),
       ),
     );

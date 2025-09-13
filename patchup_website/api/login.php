@@ -1,16 +1,22 @@
 <?php
-// Set response type to JSON
+
+/**
+ * Admin Login API
+ * Authenticates admin users and starts a session if credentials are valid.
+ */
+
+// Set JSON Response Header
 header('Content-Type: application/json');
 
-// Include database connection
+// Connect to the database
 require_once("../database/db_connection.php");
 
-// Get and sanitize POST input
+// Retrieve and sanitize POST input
 $name = trim($_POST['name'] ?? '');
 $email = trim($_POST['email'] ?? '');
 $password = $_POST['password'] ?? '';
 
-// Check for missing required fields
+// Validate required fields
 if (!$name || !$email || !$password) {
     echo json_encode(['success' => false, 'message' => 'All fields are required.']);
     exit;
@@ -23,7 +29,7 @@ $stmt->execute();
 $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 
-// Validate credentials and start session if successful
+// Validate credentials and manage session
 if ($user && $user['PasswordHash'] === $password) {
     session_start();
     session_regenerate_id(true);
@@ -34,6 +40,6 @@ if ($user && $user['PasswordHash'] === $password) {
     echo json_encode(['success' => false, 'message' => 'Invalid credentials.']);
 }
 
-// Clean up statement and database connection
+// Clean up resources
 $stmt->close();
 $conn->close();

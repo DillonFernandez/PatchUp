@@ -1,19 +1,24 @@
 <?php
+
+/**
+ * API endpoint to fetch notifications for a user.
+ * Returns notifications sorted by creation date, with decoded data.
+ */
+
 // Set response type to JSON and include database connection
 header("Content-Type: application/json");
 include_once("../database/db_connection.php");
 
-// Parse input and extract email
+// Parse and validate input
 $data = json_decode(file_get_contents("php://input"), true);
 $email = $data["Email"] ?? '';
 
-// Validate email input
 if (!$email) {
     echo json_encode(["success" => false, "notifications" => [], "message" => "Missing email"]);
     exit;
 }
 
-// Retrieve UserID using email
+// Resolve user by email
 $stmt = $conn->prepare("SELECT UserID FROM user WHERE LOWER(Email) = LOWER(?)");
 $stmt->bind_param("s", $email);
 $stmt->execute();
@@ -32,7 +37,7 @@ $stmt->bind_param("i", $userID);
 $stmt->execute();
 $result = $stmt->get_result();
 
-// Collect notifications into array and decode DataJSON
+// Collect notifications and decode DataJSON
 $notifications = [];
 while ($row = $result->fetch_assoc()) {
     $row['DataJSON'] = $row['DataJSON'] ? json_decode($row['DataJSON'], true) : null;
@@ -42,6 +47,6 @@ while ($row = $result->fetch_assoc()) {
 // Output notifications as JSON
 echo json_encode(["success" => true, "notifications" => $notifications]);
 
-// Close statement and database connection
+// Close resources
 $stmt->close();
 $conn->close();

@@ -1,10 +1,16 @@
 <?php
-// Section: Session Start and Clear Session Data
+
+/**
+ * Admin Logout
+ * Terminates the admin session and redirects to the login page.
+ */
+
+// Terminate session
 session_start();
 $_SESSION = [];
 session_unset();
 session_destroy();
 
-// Section: Redirect to Login Page
+// Redirect to login page
 header("Location: login.php");
 exit;

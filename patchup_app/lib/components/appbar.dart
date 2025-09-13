@@ -1,3 +1,8 @@
+//
+// UserAppBar: Custom app bar widget showing logo, user points, and notifications.
+// Handles fetching user points and unread notification count.
+//
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -6,12 +11,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../pages/notifications.dart';
 
-// User session class for storing current user's email
+// Stores current user session info
 class UserSession {
   static String email = '';
 }
 
-// AppBar widget with user points and notifications
+// Main app bar widget
 class UserAppBar extends StatefulWidget implements PreferredSizeWidget {
   const UserAppBar({super.key});
 
@@ -22,13 +27,11 @@ class UserAppBar extends StatefulWidget implements PreferredSizeWidget {
   State<UserAppBar> createState() => _UserAppBarState();
 }
 
-// State class for UserAppBar: handles points, notifications, and UI
 class _UserAppBarState extends State<UserAppBar> {
   int points = 0;
   bool loading = true;
   int unreadCount = 0;
 
-  // Initialize state and fetch user points and unread notifications
   @override
   void initState() {
     super.initState();
@@ -36,7 +39,7 @@ class _UserAppBarState extends State<UserAppBar> {
     fetchUnreadNotifications();
   }
 
-  // Fetch points from backend API using user's email
+  // Fetches user points from API or cache
   Future<void> fetchPoints() async {
     final email = UserSession.email;
     if (email.isEmpty) {
@@ -45,7 +48,7 @@ class _UserAppBarState extends State<UserAppBar> {
       });
       return;
     }
-    final url = 'http://192.168.1.100/patchup_app/lib/api/get_points.php';
+    final url = 'http://192.168.1.2/patchup_app/lib/api/get_points.php';
     try {
       final response = await http.post(
         Uri.parse(url),
@@ -58,11 +61,9 @@ class _UserAppBarState extends State<UserAppBar> {
         points = fetchedPoints;
         loading = false;
       });
-      // Cache the points locally
       final prefs = await SharedPreferences.getInstance();
       await prefs.setInt('cached_points_${email}', fetchedPoints);
     } catch (e) {
-      // On error, load cached points if available
       final prefs = await SharedPreferences.getInstance();
       final cachedPoints = prefs.getInt('cached_points_${email}');
       setState(() {
@@ -72,7 +73,7 @@ class _UserAppBarState extends State<UserAppBar> {
     }
   }
 
-  // Fetch unread notifications count from backend API
+  // Fetches unread notification count from API
   Future<void> fetchUnreadNotifications() async {
     final email = UserSession.email;
     if (email.isEmpty) {
@@ -81,8 +82,7 @@ class _UserAppBarState extends State<UserAppBar> {
       });
       return;
     }
-    final url =
-        'http://192.168.1.100/patchup_app/lib/api/get_notifications.php';
+    final url = 'http://192.168.1.2/patchup_app/lib/api/get_notifications.php';
     try {
       final response = await http.post(
         Uri.parse(url),
@@ -108,7 +108,7 @@ class _UserAppBarState extends State<UserAppBar> {
     }
   }
 
-  // Build the AppBar UI with logo, points, and notification badge
+  // Builds the app bar UI
   @override
   Widget build(BuildContext context) {
     return Container(

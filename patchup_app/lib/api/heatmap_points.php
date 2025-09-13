@@ -1,4 +1,10 @@
 <?php
+
+/**
+ * API endpoint to fetch pothole report locations for heatmap visualization.
+ * Returns latitude, longitude, and severity for all or filtered by user email.
+ */
+
 // Database connection
 require_once("../database/db_connection.php");
 
@@ -6,7 +12,7 @@ require_once("../database/db_connection.php");
 $input = json_decode(file_get_contents('php://input'), true);
 $userEmail = isset($input['UserEmail']) ? $input['UserEmail'] : null;
 
-// Build and execute SQL query based on user email presence
+// Fetch heatmap points, optionally filtered by user email
 if ($userEmail) {
     $stmt = $conn->prepare(
         "SELECT p.Latitude, p.Longitude, p.SeverityLevel
@@ -31,9 +37,9 @@ while ($row = $result->fetch_assoc()) {
     ];
 }
 
-// Close database connection
+// Close the database connection
 $conn->close();
 
-// Set response type to JSON and output heatmap points
+// Output heatmap points as JSON
 header('Content-Type: application/json');
 echo json_encode($reports);

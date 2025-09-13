@@ -1,4 +1,10 @@
 <?php
+
+/**
+ * Establishes a connection to the PatchUp MySQL database.
+ * Provides $conn for use in API/database operations.
+ */
+
 // Database connection configuration
 $host = "localhost";
 $user = "root";

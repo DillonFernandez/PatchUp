@@ -1,15 +1,21 @@
 <?php
+
+/**
+ * API endpoint to fetch pothole reports.
+ * Returns all reports or filters by user email if provided.
+ */
+
 // Database connection
 require_once("../database/db_connection.php");
 
-// Set response type to JSON
+// Set response header for JSON
 header('Content-Type: application/json');
 
 // Parse input and extract user email if present
 $input = json_decode(file_get_contents('php://input'), true);
 $userEmail = isset($input['UserEmail']) ? $input['UserEmail'] : null;
 
-// Build and execute SQL query based on user email presence
+// Fetch reports, optionally filtered by user email
 if ($userEmail) {
     $stmt = $conn->prepare(
         "SELECT p.*, u.Name AS UserName
@@ -40,5 +46,5 @@ if ($result) {
 // Output reports as JSON
 echo json_encode($reports);
 
-// Close database connection
+// Close the database connection
 $conn->close();

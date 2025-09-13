@@ -1,31 +1,36 @@
 <?php
-// Set response type to JSON and include database connection
+
+/**
+ * API endpoint to fetch user information by email.
+ * Returns user ID, name, and email if found.
+ */
+
+// Set response type to JSON
 header("Content-Type: application/json");
 include_once("../database/db_connection.php");
 
-// Parse input and extract email
+// Parse and validate input
 $data = json_decode(file_get_contents("php://input"), true);
 $email = $data["Email"] ?? '';
 
-// Validate email input, return empty values if missing
 if (!$email) {
-    echo json_encode(["name" => "", "email" => ""]);
+    echo json_encode(["user_id" => null, "name" => "", "email" => ""]);
     exit;
 }
 
-// Query to fetch user name and email by email
-$stmt = $conn->prepare("SELECT Name, Email FROM user WHERE LOWER(Email) = LOWER(?)");
+// Fetch user ID, name, and email by email
+$stmt = $conn->prepare("SELECT UserID, Name, Email FROM user WHERE LOWER(Email) = LOWER(?)");
 $stmt->bind_param("s", $email);
 $stmt->execute();
-$stmt->bind_result($name, $emailResult);
+$stmt->bind_result($userId, $name, $emailResult);
 
 // Output user info if found, otherwise return empty values
 if ($stmt->fetch()) {
-    echo json_encode(["name" => $name, "email" => $emailResult]);
+    echo json_encode(["user_id" => $userId, "name" => $name, "email" => $emailResult]);
 } else {
-    echo json_encode(["name" => "", "email" => ""]);
+    echo json_encode(["user_id" => null, "name" => "", "email" => ""]);
 }
 
-// Close statement and database connection
+// Close resources
 $stmt->close();
 $conn->close();

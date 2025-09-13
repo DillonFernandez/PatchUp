@@ -1,21 +1,26 @@
 <?php
-// Start session and set JSON response header
+
+/**
+ * Manage Admins API
+ * Allows authenticated admins to list, add, edit, and delete admin accounts.
+ */
+
 session_start();
 header('Content-Type: application/json');
 
-// Verify admin authentication
+// Authenticate admin session
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
     echo json_encode(['success' => false, 'message' => 'Unauthorized']);
     exit;
 }
 
-// Connect to database
+// Connect to the database
 require_once "../database/db_connection.php";
 
-// Get action parameter from request
+// Get action parameter to determine operation
 $action = $_GET['action'] ?? '';
 
-// Handle admin listing
+// List all admins
 if ($action === 'list') {
     $admins = [];
     $current_email = $_SESSION['admin_email'] ?? '';
@@ -28,7 +33,7 @@ if ($action === 'list') {
     exit;
 }
 
-// Handle adding a new admin
+// Add a new admin
 if ($action === 'add') {
     $name = trim($_POST['name'] ?? '');
     $email = trim($_POST['email'] ?? '');
@@ -101,7 +106,7 @@ if ($action === 'add') {
     exit;
 }
 
-// Handle deleting an admin
+// Delete an admin
 if ($action === 'delete') {
     $id = intval($_POST['id'] ?? 0);
     if (!$id) {
@@ -135,7 +140,7 @@ if ($action === 'delete') {
     exit;
 }
 
-// Handle editing an admin
+// Edit an admin
 if ($action === 'edit') {
     $id = intval($_POST['id'] ?? 0);
     $name = trim($_POST['name'] ?? '');
