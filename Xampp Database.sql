@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 13, 2025 at 01:03 PM
+-- Generation Time: Sep 13, 2025 at 06:31 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -336,7 +336,7 @@ INSERT INTO `potholereport` (`ReportID`, `UserID`, `Description`, `SeverityLevel
 (26, 20, 'Pothole on Galle Road, Colombo near residential area.', 'Small', '/patchup_app/uploads/img_68a6bdea05c06_1000071859.jpg', '2025-08-20 11:12:10', 'Reported', 'North Western Province', 7.338242, 80.518707),
 (27, 20, 'Pothole on Anuradhapura main road close to temple area.', 'Moderate', '/patchup_app/uploads/img_68a6bdea05c06_1000071859.jpg', '2025-08-21 15:34:29', 'Reported', 'Northern Province', 8.587634, 80.532852),
 (28, 1, 'Pothole on Kandana Station Road near Food City.', 'Small', '/patchup_app/uploads/img_68a6bdea05c06_1000071859.jpg', '2025-08-23 23:04:24', 'Resolved', 'Western Province', 7.047445, 79.899384),
-(29, 1, 'Moderate pothole near the commercial complex on Main Road.', 'Moderate', '/patchup_app/uploads/img_68aa06bf57368_d869595f-ecc8-4a6a-9f5c-2dd1b62209a06456278113163269115.jpg', '2025-08-23 23:51:51', 'In Progress', 'Western Province', 7.047541, 79.899443);
+(29, 1, 'Moderate pothole near the commercial complex on Main Road.', 'Moderate', '/patchup_app/uploads/img_68a6bdea05c06_1000071859.jpg', '2025-08-23 23:51:51', 'In Progress', 'Western Province', 7.047541, 79.899443);
 
 --
 -- Triggers `potholereport`
