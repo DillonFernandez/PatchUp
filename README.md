@@ -289,8 +289,8 @@ Look for your network interface IP address
 
 ### Test Credentials
 
-| Platform | User Type | Credentials |
-| -------------------- | ----------- | ----------------------------------------------------------------------------------------- |
+| Platform          | User Type   | Credentials                                                                               |
+| ----------------- | ----------- | ----------------------------------------------------------------------------------------- |
 | **Mobile App**    | Citizens    | **Email:** `dillon@gmail.com`<br>**Password:** `TestUser@1`                               |
 | **Web Dashboard** | Authorities | **Name:** `Dillon Fernandez`<br>**Email:** `dillon@gmail.com`<br>**Password:** `Dillon@1` |
 
@@ -300,8 +300,8 @@ Look for your network interface IP address
 
 ## 📊 Platform Overview
 
-| Platform | Target Users | Availability | Features |
-| -------------------- | ----------------- | ---------------- | ------------------------ |
+| Platform          | Target Users      | Availability     | Features                 |
+| ----------------- | ----------------- | ---------------- | ------------------------ |
 | **Mobile App**    | Citizens          | Sri Lanka Wide   | Report, Track, Engage    |
 | **Web Dashboard** | Local Authorities | Internal Testing | Manage, Analyze, Respond |
 
