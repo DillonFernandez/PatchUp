@@ -24,46 +24,15 @@ PatchUp empowers Sri Lankan citizens to improve road infrastructure through seam
 
 ## ✨ Features
 
-<table>
-<tr>
-<td width="33%">
-
-### **Citizen App**
-
-- One-tap reporting with GPS auto-location
-- Photo capture with metadata
-- Status tracking and progress monitoring
-- Multilingual support (Sinhala, Tamil, English)
-- Offline reporting with auto-sync
-- Community validation system
-- Gamification with points and achievements
-
-</td>
-<td width="33%">
-
-### **Authority Dashboard**
-
-- Real-time report management
-- Priority assignment and status updates
-- Interactive heatmap analytics
-- Direct communication with citizens
-- Progress tracking tools
-- Validated reports dashboard
-
-</td>
-<td width="33%">
-
-### **Smart Features**
-
-- Duplicate prevention system
-- Push notifications
-- Community confirmation through upvoting
-- Real-time chat for each report
-- Advanced filtering and analytics
-
-</td>
-</tr>
-</table>
+| **Citizen App**                                | **Authority Dashboard**                | **Smart Features**                      |
+| ---------------------------------------------- | -------------------------------------- | --------------------------------------- |
+| One-tap reporting with GPS auto-location       | Real-time report management            | Duplicate prevention system             |
+| Photo capture with metadata                    | Priority assignment and status updates | Push notifications                      |
+| Status tracking and progress monitoring        | Interactive heatmap analytics          | Community confirmation through upvoting |
+| Multilingual support (Sinhala, Tamil, English) | Direct communication with citizens     | Real-time chat for each report          |
+| Offline reporting with auto-sync               | Progress tracking tools                | Advanced filtering and analytics        |
+| Community validation system                    | Validated reports dashboard            |                                         |
+| Gamification with points and achievements      |                                        |                                         |
 
 ---
 
@@ -159,34 +128,14 @@ Look for your network interface IP address
 
 ## 📱 Usage
 
-<table>
-<tr>
-<td width="50%">
-
-### **For Citizens**
-
-1. **Spot** a pothole during daily commute
-2. **Open** PatchUp mobile app
-3. **Capture** photo with auto GPS tagging
-4. **Submit** with severity & description
-5. **Track** progress through dashboard
-6. **Engage** with community & earn points
-
-</td>
-<td width="50%">
-
-### **For Authorities**
-
-1. **Receive** real-time report notifications
-2. **Assess** reports on management dashboard
-3. **Prioritize** using community validation & severity
-4. **Assign** teams and update status
-5. **Communicate** directly with reporters
-6. **Monitor** progress through analytics
-
-</td>
-</tr>
-</table>
+| **For Citizens**                        | **For Authorities**                                  |
+| --------------------------------------- | ---------------------------------------------------- |
+| **Spot** a pothole during daily commute | **Receive** real-time report notifications           |
+| **Open** PatchUp mobile app             | **Assess** reports on management dashboard           |
+| **Capture** photo with auto GPS tagging | **Prioritize** using community validation & severity |
+| **Submit** with severity & description  | **Assign** teams and update status                   |
+| **Track** progress through dashboard    | **Communicate** directly with reporters              |
+| **Engage** with community & earn points | **Monitor** progress through analytics               |
 
 ---
 
