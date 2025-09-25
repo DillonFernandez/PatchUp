@@ -1,6 +1,6 @@
 //
-// NavigationExample: Main bottom navigation bar for app-wide navigation.
-// Handles switching between Home, Reports, Leaderboard, and Profile.
+// Main bottom navigation bar for app-wide navigation.
+// Handles switching between Home, Reports, Report, and Profile.
 //
 
 import 'package:flutter/material.dart';
@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import '../localization/app_localizations.dart';
 import '../pages/account.dart';
 import '../pages/home.dart';
-import '../pages/leaderboard.dart';
+import '../pages/report.dart';
 import '../pages/reports.dart';
 
 // Bottom navigation bar widget
@@ -32,8 +32,8 @@ class _NavigationExampleState extends State<NavigationExample> {
     // List of pages for navigation
     final List<Widget> pages = [
       const HomePage(),
+      const ReportPage(),
       const ReportsPage(),
-      const LeaderBoardPage(),
       const AccountPage(),
     ];
 
@@ -84,6 +84,11 @@ class _NavigationExampleState extends State<NavigationExample> {
                 label: appLoc.translate('Home'),
               ),
               NavigationDestination(
+                selectedIcon: Icon(Icons.report, color: selectedColor),
+                icon: Icon(Icons.report_outlined, color: unselectedColor),
+                label: appLoc.translate('Report'),
+              ),
+              NavigationDestination(
                 selectedIcon: Icon(
                   Icons.insert_drive_file,
                   color: selectedColor,
@@ -93,11 +98,6 @@ class _NavigationExampleState extends State<NavigationExample> {
                   color: unselectedColor,
                 ),
                 label: appLoc.translate('Reports'),
-              ),
-              NavigationDestination(
-                selectedIcon: Icon(Icons.leaderboard, color: selectedColor),
-                icon: Icon(Icons.leaderboard_outlined, color: unselectedColor),
-                label: appLoc.translate('Leaderboard'),
               ),
               NavigationDestination(
                 selectedIcon: Icon(Icons.person, color: selectedColor),

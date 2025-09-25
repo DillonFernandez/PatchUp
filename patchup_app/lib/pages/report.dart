@@ -1,5 +1,5 @@
 //
-// ReportPage: Allows users to submit pothole reports with image, location, severity, and description.
+// Allows users to submit pothole reports with image, location, severity, and description.
 // Handles offline saving and syncing when online.
 //
 
@@ -25,6 +25,7 @@ class ReportPage extends StatefulWidget {
   State<ReportPage> createState() => _ReportPageState();
 }
 
+// Main state for ReportPage: manages form fields, offline sync, and UI sections
 class _ReportPageState extends State<ReportPage> {
   // Form fields and state
   String? selectedDangerLevel;
@@ -54,6 +55,7 @@ class _ReportPageState extends State<ReportPage> {
 
   @override
   void initState() {
+    // Initialize connectivity and listen for changes to trigger sync
     super.initState();
     _connectivity = Connectivity();
     _initConnectivity();
@@ -71,7 +73,7 @@ class _ReportPageState extends State<ReportPage> {
     });
   }
 
-  // Initializes connectivity and syncs offline reports if online
+  // Connectivity initialization and sync trigger
   Future<void> _initConnectivity() async {
     final statuses = await _connectivity.checkConnectivity();
     final status =
@@ -90,13 +92,12 @@ class _ReportPageState extends State<ReportPage> {
         result == ConnectivityResult.wifi;
   }
 
-  // Gets list of synced report IDs from preferences
+  // Offline report helpers: get/add/remove/sync reports
   Future<Set<String>> _getSyncedReportIds() async {
     final prefs = await SharedPreferences.getInstance();
     return (prefs.getStringList('synced_report_ids') ?? []).toSet();
   }
 
-  // Adds a report ID to the synced list
   Future<void> _addSyncedReportId(String id) async {
     final prefs = await SharedPreferences.getInstance();
     final ids = prefs.getStringList('synced_report_ids') ?? [];
@@ -106,7 +107,6 @@ class _ReportPageState extends State<ReportPage> {
     }
   }
 
-  // Saves a report locally for offline sync
   Future<void> _saveReportOffline(Map<String, dynamic> report) async {
     final prefs = await SharedPreferences.getInstance();
     List<String> reports = prefs.getStringList('offline_reports') ?? [];
@@ -114,7 +114,6 @@ class _ReportPageState extends State<ReportPage> {
     await prefs.setStringList('offline_reports', reports);
   }
 
-  // Gets offline reports, optionally excluding synced ones
   Future<List<Map<String, dynamic>>> _getOfflineReports({
     bool excludeSynced = true,
   }) async {
@@ -127,7 +126,6 @@ class _ReportPageState extends State<ReportPage> {
         .toList();
   }
 
-  // Removes synced reports from offline storage
   Future<void> _removeSyncedReportsFromOffline() async {
     final prefs = await SharedPreferences.getInstance();
     List<String> reports = prefs.getStringList('offline_reports') ?? [];
@@ -141,20 +139,30 @@ class _ReportPageState extends State<ReportPage> {
     await prefs.setStringList('offline_reports', unsyncedReports);
   }
 
-  // Syncs offline reports to backend when online
   Future<void> _syncOfflineReports() async {
+    // Syncs offline reports to backend when online, shows summary dialog if batch
     if (_isSyncing) return;
     _isSyncing = true;
     final reports = await _getOfflineReports();
-    if (reports.isEmpty) {
+    final totalReports = reports.length;
+    if (totalReports == 0) {
       _isSyncing = false;
       return;
     }
+
+    // NEW: aggregation counters for batch summary
+    int createdCount = 0;
+    int duplicateOwnCount = 0;
+    int validatedCount = 0;
+    int otherSuccessCount = 0;
+    int failedCount = 0;
+
     final syncedIds = await _getSyncedReportIds();
     for (final report in reports) {
       final reportId = report['id'] as String? ?? '';
       if (reportId.isEmpty || syncedIds.contains(reportId)) continue;
-      final success = await _uploadLocationToDB(
+
+      final resp = await _uploadLocationToDB(
         province: report['Province'],
         lat: report['Latitude'],
         lng: report['Longitude'],
@@ -163,13 +171,75 @@ class _ReportPageState extends State<ReportPage> {
         imagePath: report['ImagePath'],
         userEmail: report['UserEmail'],
       );
-      if (success) {
+
+      if (resp != null && resp['success'] == true) {
         await _addSyncedReportId(reportId);
+        final action = resp['action'];
+
+        if (totalReports == 1 && mounted) {
+          // ORIGINAL BEHAVIOR for a single offline report
+          if (action == 'created_new') {
+            await _showThankYouDialog(context, clearFormOnClose: false);
+          } else if (action == 'duplicate_own_report' ||
+              action == 'validated_existing') {
+            final existing =
+                (resp['existing_report'] is Map)
+                    ? (resp['existing_report'] as Map).cast<String, dynamic>()
+                    : <String, dynamic>{};
+            if (action == 'duplicate_own_report') {
+              await _showExistingPotholeDialog(
+                existing: existing,
+                own: true,
+                validationInserted: false,
+                alreadyValidated: false,
+                clearFormOnClose: false,
+              );
+            } else {
+              final inserted = resp['validation_inserted'] == true;
+              await _showExistingPotholeDialog(
+                existing: existing,
+                own: !inserted,
+                validationInserted: inserted,
+                alreadyValidated: !inserted,
+                clearFormOnClose: false,
+              );
+            }
+          } else {
+            await _showThankYouDialog(context, clearFormOnClose: false);
+          }
+        } else {
+          // BATCH MODE: just count
+          if (action == 'created_new') {
+            createdCount++;
+          } else if (action == 'duplicate_own_report') {
+            duplicateOwnCount++;
+          } else if (action == 'validated_existing') {
+            validatedCount++;
+          } else {
+            otherSuccessCount++;
+          }
+        }
+      } else {
+        failedCount++;
       }
     }
+
     await _removeSyncedReportsFromOffline();
     _isSyncing = false;
+
     if (mounted) {
+      // NEW: show summary only if more than one report was processed
+      if (totalReports > 1) {
+        await _showOfflineSyncSummaryDialog(
+          context,
+          total: totalReports,
+          created: createdCount,
+          duplicates: duplicateOwnCount,
+          validated: validatedCount,
+          other: otherSuccessCount,
+          failed: failedCount,
+        );
+      }
       final appLoc = AppLocalizations.of(context);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -182,8 +252,394 @@ class _ReportPageState extends State<ReportPage> {
     }
   }
 
+  // Safe translate helper
+  String _t(AppLocalizations loc, dynamic key, {String fallback = ''}) {
+    if (key == null) return fallback;
+    try {
+      return loc.translate(key.toString());
+    } catch (_) {
+      return key.toString();
+    }
+  }
+
+  // Dialog for existing pothole report (duplicate/validation)
+  Future<void> _showExistingPotholeDialog({
+    required Map<String, dynamic> existing,
+    required bool own,
+    bool validationInserted = false,
+    bool alreadyValidated = false,
+    bool clearFormOnClose = true,
+  }) async {
+    final appLoc = AppLocalizations.of(context);
+    Map<String, dynamic> data = existing;
+
+    if (data.isEmpty || !data.containsKey('ReportID')) {
+      data = {
+        'ReportID': '-',
+        'SeverityLevel': '',
+        'Province': '',
+        'Latitude': '',
+        'Longitude': '',
+        'Description': '',
+        'Status': 'Reported',
+        'Timestamp': '',
+      };
+    }
+
+    String fmtTS(String? ts) {
+      if (ts == null || ts.isEmpty) return '';
+      try {
+        final d = DateTime.parse(ts);
+        return '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')} '
+            '${d.hour.toString().padLeft(2, '0')}:${d.minute.toString().padLeft(2, '0')}';
+      } catch (_) {
+        return ts;
+      }
+    }
+
+    try {
+      debugPrint(
+        '[ExistingDialog] Opening (own=$own, validationInserted=$validationInserted, alreadyValidated=$alreadyValidated) data=$data',
+      );
+      await showDialog(
+        context: context,
+        barrierDismissible: true,
+        builder: (_) {
+          final imgUrl = (data['ImageURL'] ?? '').toString();
+          final mq = MediaQuery.of(context);
+
+          // Header text + subtitle logic (UPDATED)
+          final bool isValidationFlow =
+              (!own) && (validationInserted || alreadyValidated);
+          final String headerTitle =
+              isValidationFlow
+                  ? _t(appLoc, 'Report Already Exists')
+                  : own
+                  ? _t(appLoc, 'Already Reported!')
+                  : _t(appLoc, 'Existing Pothole Confirmed');
+
+          final String headerSubtitle =
+              alreadyValidated
+                  ? _t(appLoc, 'You have already validated this report.')
+                  : (validationInserted
+                      ? _t(
+                        appLoc,
+                        'Your submission helped validate the existing report.',
+                      )
+                      : own
+                      ? _t(appLoc, 'You recently reported this pothole.')
+                      : _t(appLoc, 'Your report helped validate it.'));
+
+          final Color buttonColor =
+              (!own && validationInserted)
+                  ? const Color(0xFF34A853) // green for successful validation
+                  : const Color(0xFF04274B); // navy for others
+
+          return Dialog(
+            insetPadding: const EdgeInsets.symmetric(
+              horizontal: 20,
+              vertical: 24,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(24),
+            ),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: mq.size.width * 0.92,
+                maxHeight: mq.size.height * 0.85,
+                minWidth: 280,
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(24),
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.zero,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      // Header (gradient only for validation case)
+                      Container(
+                        padding: const EdgeInsets.fromLTRB(24, 28, 24, 22),
+                        decoration:
+                            (!own && !alreadyValidated)
+                                ? const BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      Color(0xFF34A853),
+                                      Color(0xFF5BCB78),
+                                    ],
+                                  ),
+                                )
+                                : const BoxDecoration(color: Color(0xFF04274B)),
+                        child: Column(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(.18),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                (!own && !alreadyValidated)
+                                    ? Icons.verified_rounded
+                                    : Icons.info_outline_rounded,
+                                color: Colors.white,
+                                size: 30,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              headerTitle,
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w800,
+                                color: Colors.white,
+                                letterSpacing: .3,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              headerSubtitle,
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.white.withOpacity(.9),
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      // Body (no badge now)
+                      Container(
+                        color: Colors.white,
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(24, 24, 24, 10),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                _t(appLoc, 'Details'),
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              _buildDetailRow(
+                                Icons.tag_rounded,
+                                _t(appLoc, 'Report ID'),
+                                data['ReportID'].toString(),
+                              ),
+                              _buildDetailRow(
+                                Icons.warning_amber_rounded,
+                                _t(appLoc, 'Severity Level'),
+                                _t(appLoc, data['SeverityLevel']),
+                              ),
+                              _buildDetailRow(
+                                Icons.location_city_rounded,
+                                _t(appLoc, 'Province'),
+                                _t(appLoc, data['Province']),
+                              ),
+                              _buildDetailRow(
+                                Icons.gps_fixed_rounded,
+                                _t(appLoc, 'Coordinates'),
+                                '${data['Latitude']}, ${data['Longitude']}',
+                              ),
+                              if ((data['Status'] ?? '').toString().isNotEmpty)
+                                _buildDetailRow(
+                                  Icons.flag_rounded,
+                                  _t(appLoc, 'Status'),
+                                  _t(appLoc, data['Status']),
+                                ),
+                              if ((data['Timestamp'] ?? '')
+                                  .toString()
+                                  .isNotEmpty)
+                                _buildDetailRow(
+                                  Icons.access_time_rounded,
+                                  _t(appLoc, 'Reported On'),
+                                  fmtTS(data['Timestamp']),
+                                ),
+
+                              if ((data['Description'] ?? '')
+                                  .toString()
+                                  .isNotEmpty) ...[
+                                const SizedBox(height: 20),
+                                Text(
+                                  _t(appLoc, 'Description'),
+                                  style: const TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Container(
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.all(14),
+                                  decoration: BoxDecoration(
+                                    color: Colors.blueGrey[50],
+                                    borderRadius: BorderRadius.circular(14),
+                                    border: Border.all(
+                                      color: Colors.blueGrey[100]!,
+                                    ),
+                                  ),
+                                  child: Text(
+                                    data['Description'].toString(),
+                                    style: TextStyle(
+                                      fontSize: 13.5,
+                                      height: 1.45,
+                                      color: Colors.grey[800],
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ],
+
+                              if (imgUrl.isNotEmpty) ...[
+                                const SizedBox(height: 20),
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(16),
+                                  child: AspectRatio(
+                                    aspectRatio: 16 / 9,
+                                    child: Image.network(
+                                      'http://192.168.8.187$imgUrl',
+                                      fit: BoxFit.cover,
+                                      errorBuilder:
+                                          (_, __, ___) => Container(
+                                            color: Colors.grey[200],
+                                            child: Icon(
+                                              Icons.broken_image_outlined,
+                                              size: 48,
+                                              color: Colors.grey[500],
+                                            ),
+                                          ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      // Footer
+                      Container(
+                        color: Colors.white,
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+                          child: SizedBox(
+                            width: double.infinity,
+                            height: 52,
+                            child: ElevatedButton.icon(
+                              onPressed: () {
+                                Navigator.pop(context);
+                                if (clearFormOnClose) _clearForm(); // CHANGED
+                              },
+                              icon: const Icon(Icons.close_rounded, size: 20),
+                              label: Text(
+                                _t(appLoc, 'Got It', fallback: 'Got It'),
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: buttonColor,
+                                foregroundColor: Colors.white,
+                                elevation: 0,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      );
+      debugPrint('[ExistingDialog] Closed');
+    } catch (e, st) {
+      debugPrint('[ExistingDialog] ERROR $e\n$st');
+    }
+  }
+
+  // Helper for dialog detail row
+  Widget _buildDetailRow(IconData icon, String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.grey[300]!),
+            ),
+            child: Icon(
+              icon,
+              size: 16,
+              color: Colors.black,
+            ), // CHANGED (was Color(0xFF04274B))
+          ),
+          SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  // (label/title stays grey)
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey[600],
+                    letterSpacing: 0.2,
+                  ),
+                ),
+                SizedBox(height: 2),
+                Text(
+                  value,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black, // CHANGED (was Color(0xFF04274B))
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Clears the form fields
+  void _clearForm() {
+    _longitudeController.clear();
+    _latitudeController.clear();
+    _descriptionController.clear();
+    setState(() {
+      _selectedImage = null;
+      selectedDangerLevel = null;
+      selectedProvince = null;
+    });
+  }
+
   // Uploads a single report to backend API
-  Future<bool> _uploadLocationToDB({
+  Future<Map<String, dynamic>?> _uploadLocationToDB({
     required String province,
     required String lat,
     required String lng,
@@ -193,7 +649,7 @@ class _ReportPageState extends State<ReportPage> {
     required String userEmail,
   }) async {
     final uri = Uri.parse(
-      'http://192.168.1.2/patchup_app/lib/api/pothole_report.php',
+      'http://192.168.8.187/patchup_app/lib/api/pothole_report.php',
     );
     var request = http.MultipartRequest('POST', uri);
     request.fields['Province'] = province;
@@ -207,10 +663,16 @@ class _ReportPageState extends State<ReportPage> {
     }
     try {
       final response = await request.send();
-      return response.statusCode == 200;
-    } catch (_) {
-      return false;
-    }
+      final body = await response.stream.bytesToString();
+      if (response.statusCode == 200) {
+        try {
+          return jsonDecode(body) as Map<String, dynamic>;
+        } catch (_) {
+          return {'success': true, 'action': 'unknown', 'raw': body};
+        }
+      }
+    } catch (_) {}
+    return null;
   }
 
   @override
@@ -332,7 +794,11 @@ class _ReportPageState extends State<ReportPage> {
   }
 
   // Shows thank you dialog after successful submission
-  Future<void> _showThankYouDialog(BuildContext context) async {
+  Future<void> _showThankYouDialog(
+    BuildContext context, {
+    bool clearFormOnClose = true,
+  }) async {
+    // CHANGED SIG
     final appLoc = AppLocalizations.of(context);
     await showDialog(
       context: context,
@@ -402,14 +868,17 @@ class _ReportPageState extends State<ReportPage> {
                 ),
                 onPressed: () {
                   Navigator.pop(context);
-                  _longitudeController.clear();
-                  _latitudeController.clear();
-                  _descriptionController.clear();
-                  setState(() {
-                    _selectedImage = null;
-                    selectedDangerLevel = null;
-                    selectedProvince = null;
-                  });
+                  if (clearFormOnClose) {
+                    // CHANGED
+                    _longitudeController.clear();
+                    _latitudeController.clear();
+                    _descriptionController.clear();
+                    setState(() {
+                      _selectedImage = null;
+                      selectedDangerLevel = null;
+                      selectedProvince = null;
+                    });
+                  }
                 },
                 child: Text(
                   appLoc.translate("Close"),
@@ -593,20 +1062,100 @@ class _ReportPageState extends State<ReportPage> {
     );
   }
 
-  // Increments user points by 5 (offline mode)
-  Future<void> _incrementUserPointsOffline(String userEmail) async {
-    final uri = Uri.parse(
-      'http://192.168.1.2/patchup_app/lib/api/increment_points.php',
+  // Shows summary dialog for batch offline sync
+  Future<void> _showOfflineSyncSummaryDialog(
+    BuildContext context, {
+    required int total,
+    required int created,
+    required int duplicates,
+    required int validated,
+    required int other,
+    required int failed,
+  }) async {
+    if (!mounted) return;
+    final appLoc = AppLocalizations.of(context);
+
+    String line(String label, int value) =>
+        value > 0 ? '• ${appLoc.translate(label)}: $value\n' : '';
+
+    final buffer =
+        StringBuffer()
+          ..write(appLoc.translate('Total queued reports'))
+          ..write(': $total\n\n')
+          ..write(line('New reports created', created))
+          ..write(line('Duplicates (own)', duplicates))
+          ..write(line('Validations added', validated))
+          ..write(line('Other successes', other))
+          ..write(line('Failed to upload', failed));
+
+    await showDialog(
+      context: context,
+      builder:
+          (_) => AlertDialog(
+            backgroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(18),
+            ),
+            title: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.blue[50],
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(
+                    Icons.sync_rounded,
+                    color: Colors.blue[700],
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    appLoc.translate('Offline Sync Summary'),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w800,
+                      fontSize: 18,
+                      color: Color(0xFF04274B),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            content: Text(
+              buffer.toString().trim(),
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey[800],
+                height: 1.4,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            actions: [
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF04274B),
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  elevation: 0,
+                ),
+                onPressed: () => Navigator.pop(context),
+                child: Text(
+                  appLoc.translate('Close'),
+                  style: const TextStyle(fontWeight: FontWeight.w700),
+                ),
+              ),
+            ],
+          ),
     );
-    try {
-      await http.post(uri, body: {'UserEmail': userEmail, 'Points': '5'});
-    } catch (_) {
-      // Ignore errors in offline mode
-    }
   }
 
   @override
   Widget build(BuildContext context) {
+    // Main page layout: header, image, location, description, severity, submit
     final appLoc = AppLocalizations.of(context);
     return Theme(
       data: Theme.of(context).copyWith(
@@ -617,40 +1166,24 @@ class _ReportPageState extends State<ReportPage> {
         ),
       ),
       child: Scaffold(
-        appBar: AppBar(
-          toolbarHeight: 72,
-          title: LayoutBuilder(
-            builder:
-                (_, __) => Text(
-                  appLoc.translate('Report a Pothole'),
-                  softWrap: true,
-                  maxLines: 2,
-                  overflow: TextOverflow.visible,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 0.5,
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(54),
+          child: Stack(
+            children: [
+              const UserAppBar(),
+              if (!_isOnline(_connectivityStatus))
+                Positioned(
+                  right: 70,
+                  top: 43,
+                  child: Icon(
+                    Icons.cloud_off,
+                    color: Colors.redAccent,
+                    size: 28,
+                    semanticLabel: appLoc.translate('Offline'),
                   ),
                 ),
+            ],
           ),
-          backgroundColor: const Color(0xFF04274B),
-          foregroundColor: Colors.white,
-          elevation: 0,
-          centerTitle: true,
-          actions: [
-            // Show offline icon if not online
-            if (!_isOnline(_connectivityStatus))
-              Padding(
-                padding: const EdgeInsets.only(right: 16.0),
-                child: Icon(
-                  Icons.cloud_off,
-                  color: Colors.redAccent,
-                  size: 28,
-                  semanticLabel: appLoc.translate('Offline'),
-                ),
-              ),
-          ],
         ),
         backgroundColor: const Color(0xFFF8FAFC),
         body: SingleChildScrollView(
@@ -688,7 +1221,7 @@ class _ReportPageState extends State<ReportPage> {
     );
   }
 
-  // Builds header section with icon and subtitle
+  // Builds header section
   Widget _buildHeaderSection(BuildContext context, AppLocalizations appLoc) {
     return Container(
       width: double.infinity,
@@ -1049,7 +1582,7 @@ class _ReportPageState extends State<ReportPage> {
     );
   }
 
-  // Builds severity section
+  // Builds severity selection section
   Widget _buildSeveritySection(BuildContext context, AppLocalizations appLoc) {
     return Container(
       decoration: BoxDecoration(
@@ -1201,7 +1734,7 @@ class _ReportPageState extends State<ReportPage> {
             return;
           }
           if (_isOnline(_connectivityStatus)) {
-            final success = await _uploadLocationToDB(
+            final resp = await _uploadLocationToDB(
               province: province,
               lat: lat,
               lng: lng,
@@ -1210,18 +1743,49 @@ class _ReportPageState extends State<ReportPage> {
               imagePath: imagePath,
               userEmail: userEmail,
             );
-            if (success) {
+            debugPrint('Report submit response: $resp');
+            if (resp != null && resp['success'] == true) {
               await _addSyncedReportId(reportId);
-              await _showThankYouDialog(context);
+              final action = resp['action'];
+              if (action == 'created_new') {
+                await _showThankYouDialog(context);
+              } else if (action == 'duplicate_own_report' ||
+                  action == 'validated_existing') {
+                final existing =
+                    (resp['existing_report'] is Map)
+                        ? (resp['existing_report'] as Map)
+                            .cast<String, dynamic>()
+                        : <String, dynamic>{};
+
+                if (action == 'duplicate_own_report') {
+                  // Duplicate own report -> own dialog
+                  await _showExistingPotholeDialog(
+                    existing: existing,
+                    own: true,
+                    validationInserted: false,
+                    alreadyValidated: false,
+                  );
+                } else {
+                  final bool inserted = resp['validation_inserted'] == true;
+                  // If inserted -> validation success (green button)
+                  // If not inserted -> already validated variant (own style but different header text)
+                  await _showExistingPotholeDialog(
+                    existing: existing,
+                    own: !inserted, // treat already validated like own style
+                    validationInserted: inserted,
+                    alreadyValidated: !inserted,
+                  );
+                }
+              } else {
+                await _showThankYouDialog(context);
+              }
             } else {
-              // Save offline if failed
               await _saveReportOffline(report);
               await _showOfflineDialog(context);
             }
           } else {
             // Save report locally for later sync
             await _saveReportOffline(report);
-            await _incrementUserPointsOffline(userEmail);
             await _showOfflineDialog(context);
           }
         },

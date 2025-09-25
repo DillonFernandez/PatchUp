@@ -1,14 +1,12 @@
 <?php
 
 /**
- * API endpoint for user registration.
+ * User registration API.
  * Validates input, checks for duplicates, enforces password rules, and creates a new user.
  */
 
-// Set response type to JSON
+// Set response type and connect to database
 header("Content-Type: application/json");
-
-// Include database connection
 include_once("../database/db_connection.php");
 
 // Parse and sanitize input

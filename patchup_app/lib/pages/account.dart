@@ -1,5 +1,5 @@
 //
-// AccountPage: Displays user info, points, quick actions, settings, and account actions.
+// AccountPage: Main user account screen showing profile, quick actions, settings, and account management.
 //
 
 import 'dart:convert';
@@ -12,10 +12,11 @@ import '../components/appbar.dart';
 import '../localization/app_localizations.dart';
 import '../main.dart';
 import 'aboutus_contactus.dart';
+import 'edit_profile.dart';
 import 'login.dart';
-import 'my_badges.dart';
 import 'my_reports.dart';
 import 'terms_conditions.dart';
+import 'my_validated_reports.dart';
 
 class AccountPage extends StatefulWidget {
   const AccountPage({super.key});
@@ -31,17 +32,15 @@ class _AccountPageState extends State<AccountPage> {
   bool loading = true;
   String selectedLanguageCode = 'en';
   bool notificationsEnabled = true;
-  int userPoints = 0;
 
   @override
   void initState() {
     super.initState();
     _fetchUserInfo();
-    _fetchUserPoints();
     _loadSelectedLanguage();
   }
 
-  // Fetches user info from backend or cache
+  // Fetch user info from backend or cache
   Future<void> _fetchUserInfo() async {
     final email = UserSession.email;
     if (email.isEmpty) {
@@ -52,7 +51,7 @@ class _AccountPageState extends State<AccountPage> {
       });
       return;
     }
-    final url = 'http://192.168.1.2/patchup_app/lib/api/get_user_info.php';
+    final url = 'http://192.168.8.187/patchup_app/lib/api/get_user_info.php';
     try {
       final response = await http.post(
         Uri.parse(url),
@@ -80,38 +79,7 @@ class _AccountPageState extends State<AccountPage> {
     }
   }
 
-  // Fetches user points from backend or cache
-  Future<void> _fetchUserPoints() async {
-    final email = UserSession.email;
-    if (email.isEmpty) {
-      setState(() {
-        userPoints = 0;
-      });
-      return;
-    }
-    final url = 'http://192.168.1.2/patchup_app/lib/api/get_points.php';
-    try {
-      final response = await http.post(
-        Uri.parse(url),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({"Email": email}),
-      );
-      final result = jsonDecode(response.body);
-      setState(() {
-        userPoints = result['points'] ?? 0;
-      });
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setInt('cached_user_points_$email', userPoints);
-    } catch (e) {
-      final prefs = await SharedPreferences.getInstance();
-      final cachedPoints = prefs.getInt('cached_user_points_$email');
-      setState(() {
-        userPoints = cachedPoints ?? 0;
-      });
-    }
-  }
-
-  // Logs out user and clears session
+  // Log out user and clear session
   Future<void> _logout(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('user_email');
@@ -123,7 +91,7 @@ class _AccountPageState extends State<AccountPage> {
     );
   }
 
-  // Shows confirm logout dialog
+  // Show confirm logout dialog
   Future<void> _confirmLogout(BuildContext context) async {
     final appLoc = AppLocalizations.of(context);
     final shouldLogout = await showDialog<bool>(
@@ -223,7 +191,7 @@ class _AccountPageState extends State<AccountPage> {
     }
   }
 
-  // Loads selected language from preferences
+  // Load selected language from preferences
   Future<void> _loadSelectedLanguage() async {
     final prefs = await SharedPreferences.getInstance();
     final langCode = prefs.getString('selected_language');
@@ -347,7 +315,7 @@ class _AccountPageState extends State<AccountPage> {
     );
   }
 
-  // Builds profile info display
+  // Profile info display section
   Widget _buildProfileInfo() {
     final appLoc = AppLocalizations.of(context);
     return Column(
@@ -381,42 +349,11 @@ class _AccountPageState extends State<AccountPage> {
             letterSpacing: 0.1,
           ),
         ),
-        const SizedBox(height: 10),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-          decoration: BoxDecoration(
-            color: const Color(0xFFFFF8E1),
-            borderRadius: BorderRadius.circular(18),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.amber.withOpacity(0.12),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.star, color: Color(0xFFFFC107), size: 22),
-              const SizedBox(width: 6),
-              Text(
-                '$userPoints ${appLoc.translate('Points')}',
-                style: const TextStyle(
-                  color: Color(0xFFFFA000),
-                  fontWeight: FontWeight.w700,
-                  fontSize: 16,
-                  letterSpacing: 0.2,
-                ),
-              ),
-            ],
-          ),
-        ),
       ],
     );
   }
 
-  // Builds quick actions section (My Reports, My Badges)
+  // Quick actions section: My Reports, My Validations, Edit Profile
   Widget _buildQuickActionsSection(
     BuildContext context,
     AppLocalizations appLoc,
@@ -471,7 +408,7 @@ class _AccountPageState extends State<AccountPage> {
                       ),
                     ),
                     Text(
-                      appLoc.translate('Access your data and achievements'),
+                      appLoc.translate('Access your data'),
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
@@ -487,40 +424,74 @@ class _AccountPageState extends State<AccountPage> {
         const SizedBox(height: 12),
 
         // Quick Action Cards
-        Row(
-          children: [
-            Expanded(
-              child: _buildQuickActionCard(
-                context,
-                icon: Icons.assignment_rounded,
-                title: appLoc.translate('My Reports'),
-                subtitle: appLoc.translate('View submissions'),
-                gradient: [Colors.blue[50]!, Colors.blue[100]!],
-                iconColor: Colors.blue[700]!,
-                onTap:
-                    () => Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => MyReportsPage()),
-                    ),
+        IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(
+                child: _buildQuickActionCard(
+                  context,
+                  icon: Icons.assignment_rounded,
+                  title: appLoc.translate('My Reports'),
+                  subtitle: appLoc.translate('View submissions'),
+                  gradient: [Colors.blue[50]!, Colors.blue[100]!],
+                  iconColor: Colors.blue[700]!,
+                  onTap:
+                      () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MyReportsPage(),
+                        ),
+                      ),
+                ),
               ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: _buildQuickActionCard(
-                context,
-                icon: Icons.emoji_events_rounded,
-                title: appLoc.translate('My Badges'),
-                subtitle: appLoc.translate('View achievements'),
-                gradient: [Colors.amber[50]!, Colors.amber[100]!],
-                iconColor: Colors.amber[700]!,
-                onTap:
-                    () => Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => MyBadgesPage()),
-                    ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _buildQuickActionCard(
+                  context,
+                  icon: Icons.verified_rounded,
+                  title: appLoc.translate('My Validations'),
+                  subtitle: appLoc.translate('Validated reports'),
+                  gradient: [Colors.purple[50]!, Colors.purple[100]!],
+                  iconColor: Colors.purple[700]!,
+                  onTap:
+                      () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MyValidationsPage(),
+                        ),
+                      ),
+                ),
               ),
-            ),
-          ],
+              const SizedBox(width: 12),
+              Expanded(
+                child: _buildQuickActionCard(
+                  context,
+                  icon: Icons.edit_rounded,
+                  title: appLoc.translate('Edit Profile'),
+                  subtitle: appLoc.translate('Update your info'),
+                  gradient: [Colors.green[50]!, Colors.green[100]!],
+                  iconColor: Colors.green[700]!,
+                  onTap: () async {
+                    // Open EditProfilePage and refresh info if updated
+                    final updated = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder:
+                            (context) => EditProfilePage(
+                              name: userName,
+                              email: userEmail,
+                            ),
+                      ),
+                    );
+                    if (updated == true) {
+                      _fetchUserInfo();
+                    }
+                  },
+                ),
+              ),
+            ],
+          ),
         ),
       ],
     );
@@ -607,7 +578,7 @@ class _AccountPageState extends State<AccountPage> {
     );
   }
 
-  // Builds settings section (language, notifications)
+  // Settings section: language selection and notifications
   Widget _buildSettingsSection(BuildContext context, AppLocalizations appLoc) {
     return Column(
       children: [
@@ -682,7 +653,7 @@ class _AccountPageState extends State<AccountPage> {
     );
   }
 
-  // Builds account actions section (About, Terms, Logout)
+  // Account actions section: About, Terms, Logout
   Widget _buildAccountActionsSection(
     BuildContext context,
     AppLocalizations appLoc,
@@ -869,7 +840,7 @@ class _AccountPageState extends State<AccountPage> {
     );
   }
 
-  // Builds language selection card
+  // Language selection card
   Widget _buildLanguageCard() {
     final appLoc = AppLocalizations.of(context);
     return Container(
@@ -982,7 +953,7 @@ class _AccountPageState extends State<AccountPage> {
     );
   }
 
-  // Builds notifications toggle section
+  // Notifications toggle section
   Widget _buildNotificationsSection(AppLocalizations appLoc) {
     return Container(
       decoration: BoxDecoration(

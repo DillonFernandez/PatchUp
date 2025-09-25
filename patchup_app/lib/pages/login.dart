@@ -30,7 +30,7 @@ class _LoginPageState extends State<LoginPage> {
 
   // Handles login logic and API call
   Future<void> _login() async {
-    final url = 'http://192.168.1.2/patchup_app/lib/api/login.php';
+    final url = 'http://192.168.8.187/patchup_app/lib/api/login.php';
     final response = await http.post(
       Uri.parse(url),
       headers: {'Content-Type': 'application/json'},

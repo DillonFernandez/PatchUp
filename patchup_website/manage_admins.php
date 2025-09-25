@@ -81,8 +81,178 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
         </div>
     </aside>
 
-    <!-- Mobile sidebar overlay -->
-    <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-30 md:hidden"></div>
+    <!-- Add admin modal -->
+    <div id="addAdminModal" class="fixed inset-0 z-50 flex items-center justify-center hidden p-4">
+        <div class="absolute inset-0 bg-black bg-opacity-50"></div>
+        <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md transform transition-all">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-gradient-to-br from-[#04274B] to-[#063366] rounded-lg flex items-center justify-center">
+                            <span data-feather="user-plus" class="w-5 h-5 text-white"></span>
+                        </div>
+                        <h2 class="text-xl font-bold text-[#04274B]">Add New Admin</h2>
+                    </div>
+                    <button id="closeAddAdminModal" class="text-gray-400 hover:text-gray-600 transition-colors">
+                        <span data-feather="x" class="w-6 h-6"></span>
+                    </button>
+                </div>
+            </div>
+            <div class="p-6">
+                <form id="addAdminForm" class="space-y-5">
+                    <div id="addAdminFormMsg"></div>
+                    <div class="space-y-2">
+                        <label class="block text-sm font-semibold text-gray-700">Full Name</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                                <span data-feather="user" class="w-4 h-4"></span>
+                            </span>
+                            <input type="text" name="name"
+                                class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-50 focus:border-[#04274B] transition-all outline-none bg-gray-50 hover:bg-white"
+                                placeholder="Enter full name" required>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-sm font-semibold text-gray-700">Email Address</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                                <span data-feather="mail" class="w-4 h-4"></span>
+                            </span>
+                            <input type="email" name="email"
+                                class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-50 focus:border-[#04274B] transition-all outline-none bg-gray-50 hover:bg-white"
+                                placeholder="Enter email address" required>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-sm font-semibold text-gray-700">Password</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                                <span data-feather="lock" class="w-4 h-4"></span>
+                            </span>
+                            <input type="text" name="password"
+                                class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-50 focus:border-[#04274B] transition-all outline-none bg-gray-50 hover:bg-white"
+                                placeholder="Enter password" required>
+                        </div>
+                    </div>
+                    <div class="flex space-x-3 pt-4">
+                        <button type="button" id="cancelAddBtn"
+                            class="flex-1 py-3 px-4 rounded-xl border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 transition-colors">
+                            Cancel
+                        </button>
+                        <button type="submit"
+                            class="flex-1 py-3 px-4 rounded-xl bg-[#04274B] text-white font-semibold hover:bg-[#063366] transition-colors shadow-sm">
+                            Add Admin
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit admin modal -->
+    <div id="editAdminModal" class="fixed inset-0 z-50 flex items-center justify-center hidden p-4">
+        <div class="absolute inset-0 bg-black bg-opacity-50"></div>
+        <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md transform transition-all">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-gradient-to-br from-[#04274B] to-[#063366] rounded-lg flex items-center justify-center">
+                            <span data-feather="edit" class="w-5 h-5 text-white"></span>
+                        </div>
+                        <h2 class="text-xl font-bold text-[#04274B]">Edit Admin</h2>
+                    </div>
+                    <button id="closeEditAdminModal" class="text-gray-400 hover:text-gray-600 transition-colors">
+                        <span data-feather="x" class="w-6 h-6"></span>
+                    </button>
+                </div>
+            </div>
+            <div class="p-6">
+                <form id="editAdminForm" class="space-y-5">
+                    <div id="editAdminFormMsg"></div>
+                    <input type="hidden" name="id" id="editAdminId">
+                    <div class="space-y-2">
+                        <label class="block text-sm font-semibold text-gray-700">Full Name</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                                <span data-feather="user" class="w-4 h-4"></span>
+                            </span>
+                            <input type="text" name="name" id="editAdminName"
+                                class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-50 focus:border-[#04274B] transition-all outline-none bg-gray-50 hover:bg-white"
+                                required>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-sm font-semibold text-gray-700">Email Address</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                                <span data-feather="mail" class="w-4 h-4"></span>
+                            </span>
+                            <input type="email" name="email" id="editAdminEmail"
+                                class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-50 focus:border-[#04274B] transition-all outline-none bg-gray-50 hover:bg-white"
+                                required>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-sm font-semibold text-gray-700">
+                            Password
+                            <span class="text-xs text-gray-500 font-normal">(leave blank to keep unchanged)</span>
+                        </label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                                <span data-feather="lock" class="w-4 h-4"></span>
+                            </span>
+                            <input type="text" name="password" id="editAdminPassword"
+                                class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-50 focus:border-[#04274B] transition-all outline-none bg-gray-50 hover:bg-white"
+                                placeholder="Enter new password">
+                        </div>
+                    </div>
+                    <div class="flex space-x-3 pt-4">
+                        <button type="button" id="cancelEditBtn"
+                            class="flex-1 py-3 px-4 rounded-xl border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 transition-colors">
+                            Cancel
+                        </button>
+                        <button type="submit"
+                            class="flex-1 py-3 px-4 rounded-xl bg-[#04274B] text-white font-semibold hover:bg-[#063366] transition-colors shadow-sm">
+                            Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete validation modal -->
+    <div id="deleteConfirmModal" class="fixed inset-0 z-50 flex items-center justify-center hidden p-4">
+        <div class="absolute inset-0 bg-black bg-opacity-50"></div>
+        <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm transform transition-all">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-gradient-to-br from-red-500 to-red-600 rounded-lg flex items-center justify-center">
+                            <span data-feather="trash-2" class="w-5 h-5 text-white"></span>
+                        </div>
+                        <h2 class="text-lg font-bold text-red-600">Delete Admin</h2>
+                    </div>
+                    <button id="closeDeleteConfirmModal" class="text-gray-400 hover:text-gray-600 transition-colors">
+                        <span data-feather="x" class="w-5 h-5"></span>
+                    </button>
+                </div>
+            </div>
+            <div class="p-6">
+                <p class="text-gray-700 mb-6">Are you sure you want to delete this admin? This action cannot be undone.</p>
+                <div class="flex space-x-3">
+                    <button id="cancelDeleteBtn"
+                        class="flex-1 py-3 px-4 rounded-xl border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 transition-colors">
+                        Cancel
+                    </button>
+                    <button id="confirmDeleteBtn"
+                        class="flex-1 py-3 px-4 rounded-xl bg-red-500 text-white font-semibold hover:bg-red-600 transition-colors">
+                        Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Main content area for admin management -->
     <main class="flex-1 md:ml-64 bg-gray-50 min-h-screen overflow-x-hidden">
@@ -192,9 +362,12 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
                 </div>
             </div>
 
+            <!-- Move modals here, directly under <body> -->
             <!-- Add admin modal -->
-            <div id="addAdminModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden p-4">
-                <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md relative transform transition-all">
+            <div id="addAdminModal" class="fixed inset-0 z-50 flex items-center justify-center hidden p-4">
+                <!-- Overlay -->
+                <div class="absolute inset-0 bg-black bg-opacity-50"></div>
+                <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md transform transition-all">
                     <div class="p-6 border-b border-gray-200">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center space-x-3">
@@ -260,12 +433,14 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
             </div>
 
             <!-- Edit admin modal -->
-            <div id="editAdminModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden p-4">
-                <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md relative transform transition-all">
+            <div id="editAdminModal" class="fixed inset-0 z-50 flex items-center justify-center hidden p-4">
+                <!-- Overlay -->
+                <div class="absolute inset-0 bg-black bg-opacity-50"></div>
+                <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md transform transition-all">
                     <div class="p-6 border-b border-gray-200">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center space-x-3">
-                                <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+                                <div class="w-10 h-10 bg-gradient-to-br from-[#04274B] to-[#063366] rounded-lg flex items-center justify-center">
                                     <span data-feather="edit" class="w-5 h-5 text-white"></span>
                                 </div>
                                 <h2 class="text-xl font-bold text-[#04274B]">Edit Admin</h2>
@@ -330,9 +505,11 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
                 </div>
             </div>
 
-            <!-- Delete confirmation modal -->
-            <div id="deleteConfirmModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden p-4">
-                <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm relative transform transition-all">
+            <!-- Delete validation modal -->
+            <div id="deleteConfirmModal" class="fixed inset-0 z-50 flex items-center justify-center hidden p-4">
+                <!-- Overlay -->
+                <div class="absolute inset-0 bg-black bg-opacity-50"></div>
+                <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm transform transition-all">
                     <div class="p-6 border-b border-gray-200">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center space-x-3">
@@ -394,29 +571,20 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
             const pageAdmins = allAdmins.slice(startIndex, endIndex);
 
             pageAdmins.forEach(admin => {
-                let badge = '';
-                let actions = '';
-
-                if (admin.is_current) {
-                    badge = '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Current User</span>';
-                    actions = '<span class="text-gray-400 text-sm">No actions available</span>';
-                } else {
-                    badge = '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">Admin</span>';
-                    actions = `
-                        <div class="flex space-x-2">
-                            <button onclick="showEditAdminModal(${admin.AdminID}, '${encodeURIComponent(admin.Name)}', '${encodeURIComponent(admin.Email)}');return false;"
-                                class="flex items-center space-x-1 px-3 py-1.5 text-xs font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors">
-                                <span data-feather="edit" class="w-3 h-3"></span>
-                                <span>Edit</span>
-                            </button>
-                            <button onclick="deleteAdmin(${admin.AdminID});return false;"
-                                class="flex items-center space-x-1 px-3 py-1.5 text-xs font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors">
-                                <span data-feather="trash-2" class="w-3 h-3"></span>
-                                <span>Delete</span>
-                            </button>
-                        </div>
-                    `;
-                }
+                let actions = `
+                    <div class="flex space-x-2">
+                        <button onclick="showEditAdminModal(${admin.AdminID}, '${encodeURIComponent(admin.Name)}', '${encodeURIComponent(admin.Email)}');return false;"
+                            class="flex items-center space-x-1 px-3 py-1.5 text-xs font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors">
+                            <span data-feather="edit" class="w-3 h-3"></span>
+                            <span>Edit</span>
+                        </button>
+                        <button onclick="deleteAdmin(${admin.AdminID});return false;"
+                            class="flex items-center space-x-1 px-3 py-1.5 text-xs font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors">
+                            <span data-feather="trash-2" class="w-3 h-3"></span>
+                            <span>Delete</span>
+                        </button>
+                    </div>
+                `;
 
                 const row = document.createElement('tr');
                 row.className = 'hover:bg-gray-50 transition-colors';
@@ -439,7 +607,7 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
                         </div>
                     </td>
                     <td class="px-6 py-4">
-                        ${badge}
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">Admin</span>
                     </td>
                     <td class="px-6 py-4">
                         ${actions}
@@ -556,6 +724,10 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
         document.getElementById('closeAddAdminModal').onclick = () => {
             modal.classList.add('hidden');
         };
+        // Add: Cancel button closes Add Admin modal
+        document.getElementById('cancelAddBtn').onclick = function() {
+            modal.classList.add('hidden');
+        };
 
         // Add admin form submission
         document.getElementById('addAdminForm').onsubmit = function(e) {
@@ -583,6 +755,10 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
         // Edit admin modal logic
         const editModal = document.getElementById('editAdminModal');
         document.getElementById('closeEditAdminModal').onclick = () => {
+            editModal.classList.add('hidden');
+        };
+        // Add: Cancel button closes Edit Admin modal
+        document.getElementById('cancelEditBtn').onclick = function() {
             editModal.classList.add('hidden');
         };
 
@@ -618,7 +794,7 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
                 });
         };
 
-        // Delete confirmation modal logic
+        // Delete validation modal logic
         let deleteAdminId = null;
         const deleteModal = document.getElementById('deleteConfirmModal');
         const closeDeleteBtn = document.getElementById('closeDeleteConfirmModal');
@@ -659,14 +835,30 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
                 });
         };
 
-        // Close modal when clicking outside
+        // Close modal when clicking outside (update selector to check overlay)
         window.addEventListener('click', function(event) {
-            if (event.target === deleteModal) {
+            // For addAdminModal
+            if (
+                event.target === document.querySelector('#addAdminModal > .absolute') ||
+                event.target === document.getElementById('addAdminModal')
+            ) {
+                modal.classList.add('hidden');
+            }
+            // For editAdminModal
+            if (
+                event.target === document.querySelector('#editAdminModal > .absolute') ||
+                event.target === document.getElementById('editAdminModal')
+            ) {
+                editModal.classList.add('hidden');
+            }
+            // For deleteConfirmModal
+            if (
+                event.target === document.querySelector('#deleteConfirmModal > .absolute') ||
+                event.target === document.getElementById('deleteConfirmModal')
+            ) {
                 deleteModal.classList.add('hidden');
                 deleteAdminId = null;
             }
-            if (event.target === modal) modal.classList.add('hidden');
-            if (event.target === editModal) editModal.classList.add('hidden');
         });
 
         // Initial load of admins

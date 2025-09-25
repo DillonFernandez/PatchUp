@@ -1,11 +1,11 @@
 <?php
 
 /**
- * API endpoint to mark notifications as read for a user.
+ * Mark notifications as read for a user.
  * Marks a specific notification or all unread notifications for the user.
  */
 
-// Set response type to JSON and include database connection
+// Set response type and connect to database
 header("Content-Type: application/json");
 include_once("../database/db_connection.php");
 
@@ -41,7 +41,7 @@ if ($notificationID) {
     $stmt->bind_param("i", $userID);
 }
 
-// Execute update and respond with result
+// Execute update and respond
 if ($stmt->execute()) {
     echo json_encode(["success" => true]);
 } else {

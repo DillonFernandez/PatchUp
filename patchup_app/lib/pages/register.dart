@@ -86,7 +86,7 @@ class _RegisterPageState extends State<RegisterPage> {
       return;
     }
 
-    final url = 'http://192.168.1.2/patchup_app/lib/api/register.php';
+    final url = 'http://192.168.8.187/patchup_app/lib/api/register.php';
     final response = await http.post(
       Uri.parse(url),
       headers: {'Content-Type': 'application/json'},

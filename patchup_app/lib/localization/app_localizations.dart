@@ -1,6 +1,6 @@
 //
-// AppLocalizations: Handles loading and providing localized strings for the app.
-// Supports English, Sinhala, and Tamil languages.
+// AppLocalizations: Loads and provides localized strings for the app.
+// Supports English, Sinhala, and Tamil.
 //
 
 import 'dart:convert';
@@ -15,16 +15,16 @@ class AppLocalizations {
 
   AppLocalizations(this.locale);
 
-  // Delegate for Flutter localization system
+  /// Delegate for Flutter localization system
   static const LocalizationsDelegate<AppLocalizations> delegate =
       _AppLocalizationsDelegate();
 
-  // Gets localization instance from widget tree
+  /// Gets localization instance from widget tree
   static AppLocalizations of(BuildContext context) {
     return Localizations.of<AppLocalizations>(context, AppLocalizations)!;
   }
 
-  // Loads language JSON file and parses translations
+  /// Loads language JSON file and parses translations
   Future<bool> load() async {
     final langCode = locale.languageCode;
     final path =
@@ -41,7 +41,7 @@ class AppLocalizations {
     return true;
   }
 
-  // Translates a key to the localized string
+  /// Translates a key to the localized string
   String translate(String key) {
     return _localizedStrings[key] ?? key;
   }
@@ -52,12 +52,12 @@ class _AppLocalizationsDelegate
     extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();
 
-  // Supported language codes
+  /// Supported language codes
   @override
   bool isSupported(Locale locale) =>
       ['en', 'si', 'ta'].contains(locale.languageCode);
 
-  // Loads localization for the given locale
+  /// Loads localization for the given locale
   @override
   Future<AppLocalizations> load(Locale locale) async {
     var localizations = AppLocalizations(locale);
@@ -65,7 +65,7 @@ class _AppLocalizationsDelegate
     return localizations;
   }
 
-  // Reloading is not required for this delegate
+  /// Reloading is not required for this delegate
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
 }

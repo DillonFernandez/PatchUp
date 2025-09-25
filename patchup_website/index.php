@@ -7,6 +7,49 @@
 
 // Include dashboard data
 include 'api/home_status.php';
+
+// NEW: build top contributors (reports only, no points/badges)
+$topContributors = [];
+if (isset($conn)) {
+    $topContribResult = $conn->query("
+        SELECT u.UserID, u.Name,
+               COUNT(p.ReportID) AS totalReports
+        FROM user u
+        JOIN potholereport p ON p.UserID = u.UserID
+        GROUP BY u.UserID, u.Name
+        ORDER BY totalReports DESC
+        LIMIT 5
+    ");
+    if ($topContribResult) {
+        while ($r = $topContribResult->fetch_assoc()) {
+            $topContributors[] = $r;
+        }
+    }
+}
+
+// NEW: build province statistics (top 5 provinces by report count)
+$provinceStats = [];
+if (isset($conn)) {
+    $provinceResult = $conn->query("
+        SELECT Province, COUNT(ReportID) AS reportCount
+        FROM potholereport
+        WHERE Province IS NOT NULL AND Province != ''
+        GROUP BY Province
+        ORDER BY reportCount DESC
+        LIMIT 5
+    ");
+    if ($provinceResult) {
+        $totalProvinceReports = 0;
+        while ($row = $provinceResult->fetch_assoc()) {
+            $provinceStats[] = $row;
+            $totalProvinceReports += $row['reportCount'];
+        }
+        // Calculate percentage for each province
+        foreach ($provinceStats as &$prov) {
+            $prov['percent'] = $totalProvinceReports > 0 ? round(($prov['reportCount'] / $totalProvinceReports) * 100, 1) : 0;
+        }
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -138,7 +181,7 @@ include 'api/home_status.php';
                     </div>
                 </div>
 
-                <!-- Additional Stats Cards (Placeholder for future metrics) -->
+                <!-- Card: This Month (use real value) -->
                 <div class="home-card home-shadow bg-white p-6 rounded-xl border border-gray-100 relative overflow-hidden">
                     <div class="absolute top-4 right-4 opacity-10">
                         <span data-feather="trending-up" class="w-12 h-12 text-green-500"></span>
@@ -148,11 +191,12 @@ include 'api/home_status.php';
                             <span data-feather="trending-up" class="w-5 h-5 text-green-500"></span>
                             <h3 class="text-sm font-semibold text-gray-600 uppercase tracking-wide">This Month</h3>
                         </div>
-                        <p class="text-3xl font-bold text-[#04274B]">+<?= round($totalReports * 0.15) ?></p>
+                        <p class="text-3xl font-bold text-[#04274B]"><?= (int)$reportsThisMonth ?></p>
                         <p class="text-xs text-gray-500 mt-1">New reports</p>
                     </div>
                 </div>
 
+                <!-- Card: Resolved -->
                 <div class="home-card home-shadow bg-white p-6 rounded-xl border border-gray-100 relative overflow-hidden">
                     <div class="absolute top-4 right-4 opacity-10">
                         <span data-feather="check-circle" class="w-12 h-12 text-blue-500"></span>
@@ -162,11 +206,12 @@ include 'api/home_status.php';
                             <span data-feather="check-circle" class="w-5 h-5 text-blue-500"></span>
                             <h3 class="text-sm font-semibold text-gray-600 uppercase tracking-wide">Resolved</h3>
                         </div>
-                        <p class="text-3xl font-bold text-[#04274B]"><?= isset($statusData['Fixed']) ? $statusData['Fixed'] : 0 ?></p>
-                        <p class="text-xs text-gray-500 mt-1">Fixed reports</p>
+                        <p class="text-3xl font-bold text-[#04274B]"><?= isset($statusData['Resolved']) ? (int)$statusData['Resolved'] : 0 ?></p>
+                        <p class="text-xs text-gray-500 mt-1">Resolved reports</p>
                     </div>
                 </div>
 
+                <!-- Card: Reported (awaiting action) -->
                 <div class="home-card home-shadow bg-white p-6 rounded-xl border border-gray-100 relative overflow-hidden">
                     <div class="absolute top-4 right-4 opacity-10">
                         <span data-feather="clock" class="w-12 h-12 text-orange-500"></span>
@@ -174,11 +219,28 @@ include 'api/home_status.php';
                     <div class="relative">
                         <div class="flex items-center space-x-2 mb-2">
                             <span data-feather="clock" class="w-5 h-5 text-orange-500"></span>
-                            <h3 class="text-sm font-semibold text-gray-600 uppercase tracking-wide">Pending</h3>
+                            <h3 class="text-sm font-semibold text-gray-600 uppercase tracking-wide">Reported</h3>
                         </div>
-                        <p class="text-3xl font-bold text-[#04274B]"><?= isset($statusData['Pending']) ? $statusData['Pending'] : 0 ?></p>
+                        <p class="text-3xl font-bold text-[#04274B]"><?= isset($statusData['Reported']) ? (int)$statusData['Reported'] : 0 ?></p>
                         <p class="text-xs text-gray-500 mt-1">Awaiting action</p>
                     </div>
+                </div>
+            </div>
+
+            <!-- Province stats card -->
+            <div class="home-card home-shadow bg-white p-6 rounded-xl border border-gray-100 mb-6">
+                <div class="flex items-center space-x-2 mb-4">
+                    <span data-feather="map-pin" class="w-5 h-5 text-indigo-500"></span>
+                    <h3 class="text-lg font-semibold text-gray-800">Top 5 Provinces by Reports</h3>
+                </div>
+                <div class="space-y-2">
+                    <?php foreach ($provinceStats as $prov) { ?>
+                        <div class="flex items-center justify-between py-2 border-b last:border-b-0">
+                            <span class="font-medium text-gray-700"><?= htmlspecialchars($prov['Province']) ?></span>
+                            <span class="text-sm text-gray-500"><?= (int)$prov['reportCount'] ?> reports</span>
+                            <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded-full"><?= $prov['percent'] ?>%</span>
+                        </div>
+                    <?php } ?>
                 </div>
             </div>
 
@@ -220,17 +282,21 @@ include 'api/home_status.php';
                     </div>
                     <div class="space-y-3">
                         <?php $rank = 1;
-                        while ($row = $topUsers->fetch_assoc()) { ?>
+                        foreach ($topContributors as $row) { ?>
                             <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                                 <div class="flex items-center space-x-3">
                                     <div class="w-8 h-8 bg-gradient-to-br from-green-400 to-green-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
                                         <?= $rank++ ?>
                                     </div>
-                                    <span class="font-medium text-gray-800"><?= htmlspecialchars($row['Name']) ?></span>
+                                    <div class="flex flex-col">
+                                        <span class="font-medium text-gray-800"><?= htmlspecialchars($row['Name']) ?></span>
+                                    </div>
                                 </div>
-                                <span class="home-badge bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
-                                    <?= $row['totalReports'] ?> reports
-                                </span>
+                                <div class="flex items-center space-x-3">
+                                    <span class="home-badge bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-medium">
+                                        <?= (int)$row['totalReports'] ?> reports
+                                    </span>
+                                </div>
                             </div>
                         <?php } ?>
                     </div>
@@ -258,8 +324,8 @@ include 'api/home_status.php';
                                         <span class="text-xs text-gray-600"><?= htmlspecialchars($row['Name']) ?></span>
                                         <span class="text-xs text-gray-400">•</span>
                                         <span class="text-xs font-medium px-2 py-1 rounded-full 
-                                            <?= $row['Status'] === 'Fixed' ? 'bg-green-100 text-green-700' : ($row['Status'] === 'In Progress' ? 'bg-blue-100 text-blue-700' : 'bg-yellow-100 text-yellow-700') ?>">
-                                            <?= $row['Status'] ?>
+                                            <?= $row['Status'] === 'Resolved' ? 'bg-green-100 text-green-700' : ($row['Status'] === 'In Progress' ? 'bg-blue-100 text-blue-700' : 'bg-yellow-100 text-yellow-700') ?>">
+                                            <?= htmlspecialchars($row['Status']) ?>
                                         </span>
                                     </div>
                                 </div>
@@ -314,18 +380,22 @@ include 'api/home_status.php';
             }
         });
 
-        // Render severity doughnut chart
+        // Map severity -> color: Small=green, Moderate=yellow, Critical=red
+        const severityColorMap = {
+            'Small': '#10b981', // green
+            'Moderate': '#fbbf24', // yellow
+            'Critical': '#f87171' // red
+        };
+        const severityColors = severityLabels.map(lbl => severityColorMap[lbl] || '#9ca3af');
+
+        // Render severity doughnut chart (uses mapped colors aligned to labels)
         new Chart(document.getElementById('severityChart'), {
             type: 'doughnut',
             data: {
                 labels: severityLabels,
                 datasets: [{
                     data: severityData,
-                    backgroundColor: [
-                        '#f87171',
-                        '#fbbf24',
-                        '#10b981'
-                    ]
+                    backgroundColor: severityColors
                 }]
             },
             options: {

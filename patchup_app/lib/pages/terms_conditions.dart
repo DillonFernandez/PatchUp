@@ -99,7 +99,7 @@ class TermsConditionsPage extends StatelessWidget {
     );
   }
 
-  // Builds the hero section with icon and subtitle
+  /// Builds the hero section with icon and subtitle
   Widget _buildHeroSection(BuildContext context, AppLocalizations appLoc) {
     return Container(
       width: double.infinity,
@@ -169,7 +169,7 @@ class TermsConditionsPage extends StatelessWidget {
     );
   }
 
-  // Builds the welcome section card
+  /// Builds the welcome section card
   Widget _buildWelcomeSection(BuildContext context, AppLocalizations appLoc) {
     return _buildSectionCard(
       context,
@@ -180,7 +180,7 @@ class TermsConditionsPage extends StatelessWidget {
     );
   }
 
-  // Builds individual terms section card
+  /// Builds individual terms section card
   Widget _buildTermsSection(
     BuildContext context,
     AppLocalizations appLoc,
@@ -197,7 +197,7 @@ class TermsConditionsPage extends StatelessWidget {
     );
   }
 
-  // Builds a section card for terms or welcome
+  /// Builds a section card for terms or welcome
   Widget _buildSectionCard(
     BuildContext context, {
     required String title,
@@ -282,7 +282,7 @@ class TermsConditionsPage extends StatelessWidget {
     );
   }
 
-  // Builds the footer section
+  /// Builds the footer section
   Widget _buildFooter(BuildContext context, AppLocalizations appLoc) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),

@@ -1,11 +1,11 @@
 <?php
 
 /**
- * API endpoint to fetch user information by email.
+ * Fetch user information by email.
  * Returns user ID, name, and email if found.
  */
 
-// Set response type to JSON
+// Set response type and connect to database
 header("Content-Type: application/json");
 include_once("../database/db_connection.php");
 
@@ -18,7 +18,7 @@ if (!$email) {
     exit;
 }
 
-// Fetch user ID, name, and email by email
+// Query user ID, name, and email by email
 $stmt = $conn->prepare("SELECT UserID, Name, Email FROM user WHERE LOWER(Email) = LOWER(?)");
 $stmt->bind_param("s", $email);
 $stmt->execute();

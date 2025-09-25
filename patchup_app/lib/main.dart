@@ -35,7 +35,7 @@ class _MyAppState extends State<MyApp> {
     _loadLocale();
   }
 
-  // Loads saved locale from shared preferences
+  /// Loads saved locale from shared preferences
   Future<void> _loadLocale() async {
     final prefs = await SharedPreferences.getInstance();
     final langCode = prefs.getString('selected_language');
@@ -46,7 +46,7 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
-  // Determines initial page based on user session
+  /// Determines initial page based on user session
   Future<Widget> _getInitialPage() async {
     final prefs = await SharedPreferences.getInstance();
     final email = prefs.getString('user_email') ?? '';
@@ -57,7 +57,7 @@ class _MyAppState extends State<MyApp> {
     return const SplashScreen();
   }
 
-  // Sets and persists locale
+  /// Sets and persists locale
   void setLocale(Locale locale) async {
     setState(() {
       _locale = locale;
@@ -66,7 +66,7 @@ class _MyAppState extends State<MyApp> {
     await prefs.setString('selected_language', locale.languageCode);
   }
 
-  // Builds MaterialApp with localization and navigation logic
+  /// Builds MaterialApp with localization and navigation logic
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

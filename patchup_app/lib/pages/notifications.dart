@@ -54,7 +54,8 @@ class _NotificationsPageState extends State<NotificationsPage> {
     setState(() {
       _loading = true;
     });
-    final url = 'http://192.168.1.2/patchup_app/lib/api/get_notifications.php';
+    final url =
+        'http://192.168.8.187/patchup_app/lib/api/get_notifications.php';
     final response = await http.post(
       Uri.parse(url),
       headers: {'Content-Type': 'application/json'},
@@ -71,7 +72,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
   Future<void> _markAllAsRead() async {
     if (_userEmail == null) return;
     final url =
-        'http://192.168.1.2/patchup_app/lib/api/mark_notifications_read.php';
+        'http://192.168.8.187/patchup_app/lib/api/mark_notifications_read.php';
     await http.post(
       Uri.parse(url),
       headers: {'Content-Type': 'application/json'},
@@ -89,7 +90,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
   Future<void> _markAsRead(int notificationID) async {
     if (_userEmail == null) return;
     final url =
-        'http://192.168.1.2/patchup_app/lib/api/mark_notifications_read.php';
+        'http://192.168.8.187/patchup_app/lib/api/mark_notifications_read.php';
     await http.post(
       Uri.parse(url),
       headers: {'Content-Type': 'application/json'},

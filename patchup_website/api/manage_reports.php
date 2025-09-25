@@ -39,16 +39,47 @@ if ($province_filter !== '' && $province_filter !== 'All') {
     $where[] = "p.Province = '$province_filter'";
 }
 $where_sql = count($where) ? 'WHERE ' . implode(' AND ', $where) : '';
-$sql = "SELECT p.*, u.Name AS ReporterName FROM potholereport p JOIN user u ON p.UserID = u.UserID $where_sql ORDER BY p.Timestamp DESC";
+// Use pothole_validation for ConfirmationsCount
+$sql = "SELECT p.*, 
+               u.Name AS ReporterName,
+               (SELECT COUNT(*) 
+                  FROM pothole_validation pv 
+                 WHERE pv.ReportID = p.ReportID) AS ConfirmationsCount
+        FROM potholereport p 
+        JOIN user u ON p.UserID = u.UserID 
+        $where_sql 
+        ORDER BY p.Timestamp DESC";
 $result = $conn->query($sql);
 $reports = [];
 if ($result && $result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
         // Format report data for output
         $row['Timestamp'] = date('Y-m-d H:i', strtotime($row['Timestamp']));
-        unset($row['ZipCode']);
         $reports[] = $row;
     }
+}
+
+// NEW: Top validated reports summary (GET)
+if (isset($_GET['top_validated']) && $_GET['top_validated'] == '1') {
+    $sql = "SELECT p.ReportID, p.Description, p.SeverityLevel, p.Province, u.Name AS ReporterName,
+                   COUNT(v.ValidationID) AS ConfirmationsCount
+            FROM potholereport p
+            JOIN user u ON p.UserID = u.UserID
+            LEFT JOIN pothole_validation v ON p.ReportID = v.ReportID
+            WHERE p.Status = 'Reported'
+            GROUP BY p.ReportID
+            HAVING ConfirmationsCount > 0
+            ORDER BY ConfirmationsCount DESC, p.Timestamp DESC";
+    $result = $conn->query($sql);
+    $top = [];
+    if ($result && $result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $top[] = $row;
+        }
+    }
+    header('Content-Type: application/json');
+    echo json_encode($top);
+    exit;
 }
 
 // Output JSON response

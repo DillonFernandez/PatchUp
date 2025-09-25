@@ -1,5 +1,5 @@
 //
-// ChatService: Handles chat message state, API communication, polling for updates,
+// ChatService: Manages chat message state, API communication, polling for updates,
 // sending, editing, and deleting messages for a pothole report conversation.
 //
 
@@ -24,8 +24,8 @@ class ChatService extends ChangeNotifier {
   bool sending = false;
   bool hasMoreBackward = true;
 
-  int? _lastMessageId; // newest message ID
-  int? _oldestMessageId; // oldest message ID
+  int? _lastMessageId;
+  int? _oldestMessageId;
   bool _fetchingNew = false;
   bool _fetchingOlder = false;
   DateTime _lastUpdateCheck = DateTime.now();
@@ -41,14 +41,14 @@ class ChatService extends ChangeNotifier {
   final Map<int, ChatMessage> _pendingDeleteOriginals = {};
   final Set<int> _pendingEdits = {};
 
-  // Initializes user info, loads initial messages, and starts polling timers
+  /// Initializes user info, loads initial messages, and starts polling timers
   Future<void> init() async {
     await _resolveCurrentUser();
     await _loadInitial();
     _startTimers();
   }
 
-  // Resolves current user info from session/email
+  /// Resolves current user info from session/email
   Future<void> _resolveCurrentUser() async {
     final email = UserSession.email;
     if (email.isEmpty) return;
@@ -72,13 +72,13 @@ class ChatService extends ChangeNotifier {
     } catch (_) {}
   }
 
-  // Checks if a message is sent by the current user
+  /// Checks if a message is sent by the current user
   bool isOwnMessage(ChatMessage m) =>
       currentUserId != null && m.userId == currentUserId;
 
   // ---------------- Messaging ----------------
 
-  // Loads initial batch of messages for the conversation
+  /// Loads initial batch of messages for the conversation
   Future<void> _loadInitial() async {
     loadingInitial = true;
     notifyListeners();
@@ -110,7 +110,7 @@ class ChatService extends ChangeNotifier {
     _lastUpdateCheck = DateTime.now().toUtc();
   }
 
-  // Schedules a microtask to notify listeners safely
+  /// Schedules a microtask to notify listeners safely
   void _asyncNotify() {
     if (!hasListeners) return;
     scheduleMicrotask(() {
@@ -118,7 +118,7 @@ class ChatService extends ChangeNotifier {
     });
   }
 
-  // Edits a message with optimistic UI update and server sync
+  /// Edits a message with optimistic UI update and server sync
   Future<void> editMessage(int messageId, String newText) async {
     final email = UserSession.email;
     if (email.isEmpty || newText.trim().isEmpty) return;
@@ -181,7 +181,7 @@ class ChatService extends ChangeNotifier {
     }
   }
 
-  // Deletes a message with optimistic UI update and server sync
+  /// Deletes a message with optimistic UI update and server sync
   Future<void> deleteMessage(int messageId) async {
     final email = UserSession.email;
     if (email.isEmpty) return;
@@ -220,7 +220,7 @@ class ChatService extends ChangeNotifier {
     }
   }
 
-  // Polls for new messages from the server
+  /// Polls for new messages from the server
   Future<void> _pollNewMessages() async {
     if (_fetchingNew || _lastMessageId == null) return;
     _fetchingNew = true;
@@ -254,7 +254,7 @@ class ChatService extends ChangeNotifier {
     _pollMessageUpdates();
   }
 
-  // Polls for updates to existing messages (edits/deletes)
+  /// Polls for updates to existing messages (edits/deletes)
   Future<void> _pollMessageUpdates() async {
     if (_fetchingUpdates) return;
     _fetchingUpdates = true;
@@ -324,7 +324,7 @@ class ChatService extends ChangeNotifier {
     _fetchingUpdates = false;
   }
 
-  // Loads older messages for pagination
+  /// Loads older messages for pagination
   Future<void> loadOlder() async {
     if (_fetchingOlder || !hasMoreBackward || _oldestMessageId == null) return;
     _fetchingOlder = true;
@@ -358,7 +358,7 @@ class ChatService extends ChangeNotifier {
     _fetchingOlder = false;
   }
 
-  // Sends a new message to the server
+  /// Sends a new message to the server
   Future<void> sendMessage(String text) async {
     final email = UserSession.email;
     if (email.isEmpty || text.trim().isEmpty || sending) return;
@@ -394,7 +394,7 @@ class ChatService extends ChangeNotifier {
 
   // ---------------- Timers ----------------
 
-  // Starts polling timer for new messages
+  /// Starts polling timer for new messages
   void _startTimers() {
     _pollMessagesTimer?.cancel();
     _pollMessagesTimer = Timer.periodic(

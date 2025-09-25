@@ -1,8 +1,8 @@
 <?php
 
 /**
- * API endpoint to update a chat message for a user.
- * Allows editing only by the owner and if not deleted.
+ * Update a chat message securely.
+ * Admins can edit any non-deleted message; users can edit their own message only if they own the report.
  */
 
 header("Content-Type: application/json");
@@ -18,52 +18,94 @@ if ($email === '' || $messageID <= 0 || $message === '') {
     echo json_encode(["success" => false, "message" => "Missing fields"]);
     exit;
 }
+if (mb_strlen($message) > 2000) {
+    echo json_encode(["success" => false, "message" => "Message too long"]);
+    exit;
+}
 
-// Resolve user by email
-$stmt = $conn->prepare("SELECT UserID FROM user WHERE LOWER(Email)=LOWER(?)");
+// Identify actor as user or admin
+$isAdmin = 0;
+$actorId = null;
+
+// Check if actor is a user
+$stmt = $conn->prepare("SELECT UserID FROM user WHERE LOWER(Email)=LOWER(?) LIMIT 1");
 $stmt->bind_param("s", $email);
 $stmt->execute();
-$stmt->bind_result($userID);
-if (!$stmt->fetch()) {
-    $stmt->close();
-    $conn->close();
-    echo json_encode(["success" => false, "message" => "User not found"]);
-    exit;
+$stmt->bind_result($uid);
+if ($stmt->fetch()) {
+    $actorId = (int)$uid;
+    $isAdmin = 0;
 }
 $stmt->close();
 
-// Update message if owner and not deleted
-$stmt = $conn->prepare("
-    UPDATE chat_messages
-       SET MessageText = ?, IsEdited = 1, EditedAt = NOW()
-     WHERE MessageID = ? AND UserID = ? AND IsDeleted = 0
-    LIMIT 1
-");
-$stmt->bind_param("sii", $message, $messageID, $userID);
-$stmt->execute();
-
-if ($stmt->affected_rows === 1) {
-    $stmt->close();
-    // Fetch and return the updated message
-    $stmt = $conn->prepare("
-        SELECT c.MessageID, c.ReportID, c.UserID, u.Name AS UserName,
-               c.MessageText, c.CreatedAt, c.IsEdited, c.EditedAt, c.IsDeleted, c.IsAdmin
-          FROM chat_messages c
-          JOIN user u ON c.UserID=u.UserID
-         WHERE c.MessageID = ?
-         LIMIT 1
-    ");
-    $stmt->bind_param("i", $messageID);
+// If not a user, check if actor is an admin
+if ($actorId === null) {
+    $stmt = $conn->prepare("SELECT AdminID FROM admin WHERE LOWER(Email)=LOWER(?) LIMIT 1");
+    $stmt->bind_param("s", $email);
     $stmt->execute();
-    $res = $stmt->get_result();
-    $row = $res->fetch_assoc();
+    $stmt->bind_result($aid);
+    if ($stmt->fetch()) {
+        $actorId = (int)$aid;
+        $isAdmin = 1;
+    }
     $stmt->close();
-    echo json_encode(["success" => true, "message" => $row]);
-} else {
-    $err = $conn->error;
-    $stmt->close();
-    echo json_encode(["success" => false, "message" => $err ?: "Update failed"]);
 }
 
-// Close the database connection
+if ($actorId === null) {
+    echo json_encode(["success" => false, "message" => "User/Admin not found"]);
+    $conn->close();
+    exit;
+}
+
+// Update message based on role
+if ($isAdmin) {
+    $stmt = $conn->prepare("
+        UPDATE chat_messages
+           SET MessageText = ?, IsEdited = 1, EditedAt = NOW()
+         WHERE MessageID = ? AND IsDeleted = 0
+         LIMIT 1
+    ");
+    $stmt->bind_param("si", $message, $messageID);
+} else {
+    $stmt = $conn->prepare("
+        UPDATE chat_messages c
+        JOIN potholereport p ON p.ReportID = c.ReportID
+           SET c.MessageText = ?, c.IsEdited = 1, c.EditedAt = NOW()
+         WHERE c.MessageID = ?
+           AND c.UserID = ?
+           AND p.UserID = ?
+           AND c.IsDeleted = 0
+         LIMIT 1
+    ");
+    $stmt->bind_param("siii", $message, $messageID, $actorId, $actorId);
+}
+
+$stmt->execute();
+$affected = $stmt->affected_rows;
+$stmt->close();
+
+if ($affected !== 1) {
+    echo json_encode(["success" => false, "message" => "Not authorized or update failed"]);
+    $conn->close();
+    exit;
+}
+
+// Return updated message for response
+$stmt = $conn->prepare("
+    SELECT c.MessageID, c.ReportID, c.UserID,
+           u.Name AS UserName,
+           c.MessageText, c.CreatedAt, c.IsEdited, c.EditedAt,
+           c.IsDeleted, c.IsAdmin
+      FROM chat_messages c
+      LEFT JOIN user u ON c.UserID = u.UserID
+     WHERE c.MessageID = ?
+     LIMIT 1
+");
+$stmt->bind_param("i", $messageID);
+$stmt->execute();
+$res = $stmt->get_result();
+$row = $res->fetch_assoc();
+$stmt->close();
+
+echo json_encode(["success" => true, "message" => $row]);
 $conn->close();

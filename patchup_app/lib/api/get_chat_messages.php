@@ -1,7 +1,7 @@
 <?php
 
 /**
- * API endpoint to fetch chat messages for a pothole report.
+ * Fetch chat messages for a pothole report.
  * Supports pagination, incremental fetch, and update polling.
  */
 
@@ -21,7 +21,7 @@ if ($reportID <= 0) {
     exit;
 }
 
-// Build SQL query based on fetch mode
+// Build SQL query based on requested fetch mode
 $params = [];
 $sql = "";
 $mode = "";
@@ -41,7 +41,7 @@ if ($afterId !== null && $afterId > 0) {
     $params = [$reportID, $afterId, $limit];
     $mode = "after";
 } elseif ($beforeId !== null && $beforeId > 0) {
-    // Fetch older messages (for upward scroll)
+    // Fetch older messages for upward scroll
     $sql = "
         SELECT c.MessageID, c.ReportID, c.UserID, u.Name AS UserName,
                c.MessageText, c.CreatedAt, c.IsEdited, c.EditedAt, c.IsDeleted, c.IsAdmin
@@ -123,5 +123,5 @@ echo json_encode([
     "last_id" => $lastId
 ]);
 
-// Close the database connection
+// Close database connection
 $conn->close();

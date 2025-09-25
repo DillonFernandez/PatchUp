@@ -159,7 +159,6 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
                             <tr>
                                 <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Customer</th>
                                 <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Email</th>
-                                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Points</th>
                                 <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
@@ -224,7 +223,7 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
             if (totalCustomers === 0) {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td colspan="4" class="px-6 py-12 text-center">
+                    <td colspan="3" class="px-6 py-12 text-center">
                         <div class="flex flex-col items-center space-y-2 text-gray-500">
                             <span data-feather="user-x" class="w-12 h-12 text-gray-300"></span>
                             <p class="text-lg font-medium">No customers found</p>
@@ -261,11 +260,6 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
                             <span data-feather="mail" class="w-4 h-4"></span>
                             <span>${customer.Email}</span>
                         </div>
-                    </td>
-                    <td class="px-6 py-4">
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                            ${customer.Points} points
-                        </span>
                     </td>
                     <td class="px-6 py-4">
                         <a href="customer_reports.php?userid=${customer.UserID}&name=${encodeURIComponent(customer.Name)}"

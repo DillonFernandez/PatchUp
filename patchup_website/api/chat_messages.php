@@ -95,12 +95,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                c.IsAdmin,
                c.UserID,
                u.Name AS SenderName,
-               pr.UserID AS ReportOwnerID
+               pr.UserID AS ReportOwnerID,
+               c.IsDeleted,
+               c.IsEdited,
+               DATE_FORMAT(c.EditedAt,'%Y-%m-%d %H:%i:%s') AS EditedAt
         FROM chat_messages c
         LEFT JOIN user u ON u.UserID = c.UserID
         LEFT JOIN potholereport pr ON pr.ReportID = c.ReportID
         WHERE c.ReportID=?
-        AND c.IsDeleted=0
         ORDER BY c.MessageID ASC";
     $stmt = $mysqli->prepare($sql);
     $stmt->bind_param('i', $report_id);
@@ -108,6 +110,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $res = $stmt->get_result();
     $rows = [];
     while ($row = $res->fetch_assoc()) {
+        if ($row['IsDeleted']) {
+            $row['MessageText'] = null;
+            $row['Deleted'] = true;
+        } else {
+            $row['Deleted'] = false;
+        }
+        // IsEdited is already in the row
         $rows[] = $row;
     }
     $stmt->close();
@@ -149,7 +158,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Create a shadow user for the admin if not found
         $shadowEmail = $adminEmail ?: ('admin+' . uniqid() . '@local');
         $pwd = password_hash(bin2hex(random_bytes(8)), PASSWORD_BCRYPT);
-        $stmt = $mysqli->prepare("INSERT INTO user(Name,Email,PasswordHash,Points) VALUES(?,?,?,0)");
+        $stmt = $mysqli->prepare("INSERT INTO user(Name,Email,PasswordHash) VALUES(?,?,?)");
         $stmt->bind_param('sss', $adminName, $shadowEmail, $pwd);
         if ($stmt->execute()) {
             $userId = $stmt->insert_id;

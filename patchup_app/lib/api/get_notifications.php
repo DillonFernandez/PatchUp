@@ -1,11 +1,11 @@
 <?php
 
 /**
- * API endpoint to fetch notifications for a user.
+ * Fetch notifications for a user.
  * Returns notifications sorted by creation date, with decoded data.
  */
 
-// Set response type to JSON and include database connection
+// Set response type and connect to database
 header("Content-Type: application/json");
 include_once("../database/db_connection.php");
 

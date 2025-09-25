@@ -54,7 +54,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     _fadeController.forward();
   }
 
-  // Handles updates from ChatService and auto-scroll logic
+  /// Handles updates from ChatService and auto-scroll logic
   void _onServiceUpdate() {
     if (!mounted) return;
     if (_autoScroll && _service.messages.isNotEmpty) {
@@ -70,7 +70,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     }
   }
 
-  // Handles scroll events for loading older messages and auto-scroll
+  /// Handles scroll events for loading older messages and auto-scroll
   void _handleScroll() {
     if (_scroll.position.pixels < _scroll.position.minScrollExtent + 60 &&
         !_loadingOlder &&
@@ -82,7 +82,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     _autoScroll = atBottom;
   }
 
-  // Loads older messages when user scrolls up
+  /// Loads older messages when user scrolls up
   Future<void> _loadOlder() async {
     setState(() => _loadingOlder = true);
     await _service.loadOlder();
@@ -99,7 +99,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  // Sends a new message
+  /// Sends a new message
   void _send() {
     final text = _controller.text;
     if (text.trim().isEmpty) return;
@@ -107,7 +107,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     _controller.clear();
   }
 
-  // Localization helper
+  /// Localization helper
   String _t(String key) => AppLocalizations.of(context).translate(key);
 
   @override
@@ -153,7 +153,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     );
   }
 
-  // Builds chat message list and loading/empty states
+  /// Builds chat message list and loading/empty states
   Widget _buildChatContent() {
     return Consumer<ChatService>(
       builder: (_, svc, __) {
@@ -191,7 +191,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     );
   }
 
-  // Shows loading indicator when loading older messages
+  /// Shows loading indicator when loading older messages
   Widget _buildLoadingIndicator() {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -236,7 +236,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     );
   }
 
-  // Shows loading state when initial messages are being fetched
+  /// Shows loading state when initial messages are being fetched
   Widget _buildLoadingState() {
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
     return LayoutBuilder(
@@ -305,7 +305,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     );
   }
 
-  // Shows empty state when there are no messages
+  /// Shows empty state when there are no messages
   Widget _buildEmptyState() {
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
     return LayoutBuilder(
@@ -396,7 +396,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     );
   }
 
-  // Builds a chat message bubble with styling and options
+  /// Builds a chat message bubble with styling and options
   Widget _buildMessageBubble(ChatMessage message, bool isMe) {
     final isDeleted = message.isDeleted;
     final showEdited = message.isEdited && !isDeleted;
@@ -571,7 +571,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     );
   }
 
-  // Builds message input field and send button
+  /// Builds message input field and send button
   Widget _buildMessageInput(AppLocalizations appLoc) {
     return Consumer<ChatService>(
       builder: (_, svc, __) {
@@ -686,7 +686,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     );
   }
 
-  // Shows options for editing or deleting a message
+  /// Shows options for editing or deleting a message
   void _showMessageOptions(ChatMessage msg) {
     showModalBottomSheet(
       context: context,
@@ -771,7 +771,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     );
   }
 
-  // Starts editing a message
+  /// Starts editing a message
   Future<void> _startEditMessage(ChatMessage msg) async {
     final updated = await showDialog<String>(
       context: context,
@@ -784,7 +784,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     }
   }
 
-  // Confirms deletion of a message
+  /// Confirms deletion of a message
   void _confirmDelete(ChatMessage msg) {
     showDialog(
       context: context,
@@ -886,7 +886,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     );
   }
 
-  // Formats time for message display
+  /// Formats time for message display
   String _formatTime(DateTime dt) {
     final h = dt.hour % 12 == 0 ? 12 : dt.hour % 12;
     final m = dt.minute.toString().padLeft(2, '0');
@@ -895,7 +895,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
   }
 }
 
-// Dialog for editing a chat message
+/// Dialog for editing a chat message
 class _EditMessageDialog extends StatefulWidget {
   final String initialText;
 

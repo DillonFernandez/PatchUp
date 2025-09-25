@@ -284,11 +284,22 @@ if (!$userid) {
             const userid = <?php echo json_encode($userid); ?>;
             fetch(`api/view_customers.php?action=reports&userid=${encodeURIComponent(userid)}&status=${encodeURIComponent(status)}&severity=${encodeURIComponent(severity)}&province=${encodeURIComponent(province)}`)
                 .then(res => res.json())
-                .then(data => {
-                    updateHeatmap(data.reports || []);
+                .then(async data => {
+                    const reportsArr = data.reports || [];
+                    // fetch confirmation counts -> now validations (pothole_validation)
+                    let countsMap = {};
+                    const ids = reportsArr.map(r => r.ReportID).filter(Boolean);
+                    if (ids.length) {
+                        try {
+                            const cRes = await fetch('api/report_confirmations_counts.php?report_ids=' + ids.join(','));
+                            const cJson = await cRes.json();
+                            countsMap = cJson.counts || {};
+                        } catch (e) {}
+                    }
+                    updateHeatmap(reportsArr);
                     const grid = document.getElementById('reportsGrid');
                     grid.innerHTML = '';
-                    if (!data.reports || !data.reports.length) {
+                    if (!reportsArr.length) {
                         grid.innerHTML = `
                             <div class="col-span-full text-center text-gray-500 py-12 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
                                 <div class="flex flex-col items-center space-y-2">
@@ -301,7 +312,7 @@ if (!$userid) {
                         feather.replace();
                         return;
                     }
-                    data.reports.forEach(report => {
+                    reportsArr.forEach(report => {
                         const sevClass = report.SeverityLevel === 'Critical' ? 'bg-red-50 text-red-700 border-red-200' :
                             report.SeverityLevel === 'Moderate' ? 'bg-yellow-50 text-yellow-700 border-yellow-200' :
                             'bg-green-50 text-green-700 border-green-200';
@@ -311,6 +322,9 @@ if (!$userid) {
                         const img = report.ImageURL ?
                             `<img src="${report.ImageURL}" alt="Pothole Image" class="object-cover w-full h-32 rounded-lg">` :
                             `<div class="w-full h-32 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400"><span data-feather="image" class="w-8 h-8"></span></div>`;
+                        // Change confirmation text to "Validation(s)"
+                        const cCount = Number(countsMap[report.ReportID] || 0);
+                        const cText = cCount === 0 ? 'No validations' : (cCount === 1 ? '1 Validation' : cCount + ' Validations');
                         grid.innerHTML += `
 <div class="bg-white border border-gray-200 rounded-xl p-5 hover:shadow-md transition-shadow">
     <div class="flex items-start justify-between mb-4">
@@ -339,6 +353,11 @@ if (!$userid) {
         </div>
         
         <div class="flex items-center space-x-2">
+            <span data-feather="check-circle" class="w-4 h-4 text-gray-400"></span>
+            <span class="text-sm text-gray-600">${cText}</span>
+        </div>
+        
+        <div class="flex items-center space-x-2">
             <span data-feather="navigation" class="w-4 h-4 text-gray-400"></span>
             <span class="text-sm text-gray-600">Lat: ${report.Latitude}, Lng: ${report.Longitude}</span>
         </div>
@@ -359,7 +378,6 @@ if (!$userid) {
 </div>
 `;
                     });
-                    // Re-initialize feather icons for new content
                     feather.replace();
                 });
         }

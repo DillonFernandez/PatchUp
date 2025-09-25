@@ -203,6 +203,17 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
                 </form>
             </div>
 
+            <!-- NEW: Top Validated Reports Summary -->
+            <div id="topValidatedReports" class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                <div class="flex items-center space-x-2 mb-2">
+                    <span data-feather="star" class="w-5 h-5 text-yellow-500"></span>
+                    <h3 class="text-lg font-semibold text-gray-800">Validated Reports</h3>
+                </div>
+                <div id="topValidatedList" class="space-y-3 text-sm">
+                    <div class="text-gray-400">Loading…</div>
+                </div>
+            </div>
+
             <!-- Section: Heatmap Visualization -->
             <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
                 <div class="flex items-center justify-between mb-4">
@@ -393,8 +404,11 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
                         const img = report.ImageURL ?
                             `<img src="${report.ImageURL}" alt="Pothole Image" class="object-cover w-full h-32 rounded-lg">` :
                             `<div class="w-full h-32 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400"><span data-feather="image" class="w-8 h-8"></span></div>`;
+                        // Change confirmation text to "Validation(s)"
+                        const cCount = Number(report.ConfirmationsCount || 0);
+                        const cText = cCount === 0 ? 'No validations' : (cCount === 1 ? '1 Validation' : cCount + ' Validations');
                         grid.innerHTML += `
-<div class="bg-white border border-gray-200 rounded-xl p-5 hover:shadow-md transition-shadow">
+<div id="report-${report.ReportID}" class="bg-white border border-gray-200 rounded-xl p-5 hover:shadow-md transition-shadow">
   <div class="flex items-start justify-between mb-4">
     <div class="flex items-center space-x-2">
       <span class="text-xs text-gray-500 font-mono bg-gray-100 px-2 py-1 rounded">#${report.ReportID}</span>
@@ -423,6 +437,11 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
     <div class="flex items-center space-x-2">
       <span data-feather="map-pin" class="w-4 h-4 text-gray-400"></span>
       <span class="text-sm text-gray-600">${report.Province}</span>
+    </div>
+    
+    <div class="flex items-center space-x-2">
+      <span data-feather="check-circle" class="w-4 h-4 text-gray-400"></span>
+      <span class="text-sm text-gray-600">${cText}</span>
     </div>
     
     <div class="flex items-center space-x-2">
@@ -459,8 +478,7 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
       <span class="chatCount hidden absolute -top-1 -right-1 bg-red-600 text-white text-[10px] leading-none px-1.5 py-0.5 rounded-full font-semibold"></span>
     </button>
   </div>
-</div>
-`;
+</div>`;
                     });
                     // Re-initialize feather icons for new content
                     feather.replace();
@@ -491,6 +509,50 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
                     // NEW: load message counts for all reports
                     updateChatCounts(data);
                 });
+        }
+
+        // NEW: Fetch and render top validated reports
+        function fetchTopValidatedReports() {
+            fetch('api/manage_reports.php?top_validated=1')
+                .then(res => res.json())
+                .then(data => {
+                    const list = document.getElementById('topValidatedList');
+                    if (!data.length) {
+                        list.innerHTML = '<div class="text-gray-400">No reports found.</div>';
+                        return;
+                    }
+                    list.innerHTML = '';
+                    data.forEach((r, idx) => {
+                        const sevClass = r.SeverityLevel === 'Critical' ? 'text-red-700' :
+                            r.SeverityLevel === 'Moderate' ? 'text-yellow-700' :
+                            'text-green-700';
+                        // clickable row
+                        list.innerHTML += `
+<div class="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 rounded px-2 py-1" onclick="highlightReport('${r.ReportID}')">
+  <span class="font-bold text-lg text-gray-500">${idx + 1}.</span>
+  <span class="font-mono text-xs bg-gray-100 px-2 py-1 rounded">#${r.ReportID}</span>
+  <span class="font-semibold ${sevClass}">${r.SeverityLevel}</span>
+  <span class="text-gray-600">${r.Province}</span>
+  <span class="text-gray-800 line-clamp-1 flex-1">${r.Description}</span>
+  <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 text-xs font-medium border border-blue-200">${r.ConfirmationsCount} Validation${r.ConfirmationsCount == 1 ? '' : 's'}</span>
+</div>`;
+                    });
+                });
+        }
+
+        // NEW: highlight and scroll to report card
+        window.highlightReport = function(reportId) {
+            const el = document.getElementById('report-' + reportId);
+            if (el) {
+                el.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+                el.classList.add('ring-2', 'ring-yellow-400');
+                setTimeout(() => {
+                    el.classList.remove('ring-2', 'ring-yellow-400');
+                }, 1800);
+            }
         }
 
         // NEW: Batch fetch message counts for displayed reports
@@ -529,6 +591,7 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
         // Initial page load: setup map and fetch reports
         initMap();
         fetchReports();
+        fetchTopValidatedReports();
 
         // --- Chat Logic ---
         let chatReportId = null;
@@ -578,22 +641,31 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
                     rows.forEach(m => {
                         const isAdmin = Number(m.IsAdmin) === 1;
                         const isReportOwner = !isAdmin && Number(m.UserID) === Number(m.ReportOwnerID);
+                        const isDeleted = m.Deleted === true || m.Deleted === "1" || m.IsDeleted === "1";
+                        const isEdited = Number(m.IsEdited) === 1;
                         const wrapper = document.createElement('div');
 
-                        let messageClass, nameClass, alignment;
-                        if (isAdmin) {
-                            messageClass = 'bg-red-50 border-red-300 text-red-700';
-                            nameClass = 'text-red-700';
-                            alignment = 'items-end';
-                        } else if (isReportOwner) {
-                            messageClass = 'bg-blue-50 border-blue-300 text-blue-700';
-                            nameClass = 'text-blue-700';
-                            alignment = 'items-start';
+                        let messageClass, nameClass, alignment, messageText, editedText;
+                        if (isDeleted) {
+                            messageClass = 'bg-gray-100 border-gray-300 text-gray-400 italic';
+                            nameClass = 'text-gray-400';
+                            messageText = '<span class="italic">Message deleted</span>';
+                            editedText = '';
                         } else {
-                            messageClass = 'bg-gray-50 border-gray-200 text-gray-800';
-                            nameClass = 'text-[#04274B]';
-                            alignment = 'items-start';
+                            if (isAdmin) {
+                                messageClass = 'bg-red-50 border-red-300 text-red-700';
+                                nameClass = 'text-red-700';
+                            } else if (isReportOwner) {
+                                messageClass = 'bg-blue-50 border-blue-300 text-blue-700';
+                                nameClass = 'text-blue-700';
+                            } else {
+                                messageClass = 'bg-gray-50 border-gray-200 text-gray-800';
+                                nameClass = 'text-[#04274B]';
+                            }
+                            messageText = escapeHtml(m.MessageText);
+                            editedText = isEdited ? `<span class="ml-2 text-[10px] text-gray-400 italic">(edited)</span>` : '';
                         }
+                        alignment = isAdmin ? 'items-end' : 'items-start';
 
                         wrapper.className = `flex flex-col ${alignment}`;
                         wrapper.innerHTML = `
@@ -601,8 +673,8 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
       <div class="font-semibold mb-1 ${nameClass}">
           ${escapeHtml(m.SenderName || (isAdmin ? 'Admin' : isReportOwner ? 'Report Owner' : 'User'))}
       </div>
-      <div class="whitespace-pre-wrap break-words">${escapeHtml(m.MessageText)}</div>
-      <div class="mt-1 text-[10px] opacity-60">${m.CreatedAt}</div>
+      <div class="whitespace-pre-wrap break-words">${messageText}${editedText}</div>
+      <div class="mt-1 text-[10px] opacity-60">${m.CreatedAt}${isEdited && m.EditedAt ? ` <span class="italic">(edited at ${m.EditedAt})</span>` : ''}</div>
   </div>`;
                         chatMessagesEl.appendChild(wrapper);
                     });

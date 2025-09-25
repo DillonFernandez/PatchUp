@@ -24,7 +24,7 @@ $action = $_GET['action'] ?? '';
 if ($action === 'list') {
     $customers = [];
     // Exclude emails that start with 'admin+' (admin aliases)
-    $result = $conn->query("SELECT UserID, Name, Email, Points FROM user WHERE Email NOT LIKE 'admin+%@%' ORDER BY UserID ASC");
+    $result = $conn->query("SELECT UserID, Name, Email FROM user WHERE Email NOT LIKE 'admin+%@%' ORDER BY UserID ASC");
     while ($row = $result->fetch_assoc()) {
         $customers[] = $row;
     }

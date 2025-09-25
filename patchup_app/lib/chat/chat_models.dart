@@ -2,6 +2,7 @@
 // Chat message models and utilities for parsing and copying chat data.
 //
 
+/// Represents a chat message in the app.
 class ChatMessage {
   final int messageId;
   final int reportId;
@@ -27,7 +28,7 @@ class ChatMessage {
     required this.isAdmin,
   });
 
-  // Parses a ChatMessage from a map (e.g., from JSON)
+  /// Parses a ChatMessage from a map (e.g., from JSON).
   factory ChatMessage.fromMap(Map<String, dynamic> map) {
     return ChatMessage(
       messageId: _asInt(map['MessageID']),
@@ -48,14 +49,14 @@ class ChatMessage {
     );
   }
 
-  // Utility: Safely parses integers from dynamic values
+  /// Utility: Safely parses integers from dynamic values.
   static int _asInt(dynamic v) {
     if (v is int) return v;
     if (v is String) return int.tryParse(v) ?? 0;
     return 0;
   }
 
-  // Returns a copy of this message with optional overrides
+  /// Returns a copy of this message with optional overrides.
   ChatMessage copyWith({
     String? text,
     bool? isEdited,

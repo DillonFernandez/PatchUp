@@ -2,48 +2,75 @@
 
 /**
  * Home Status API
- * Provides summary statistics and data for the admin dashboard:
- * - Total reports, status breakdown, severity breakdown,
- *   top users, and latest reports.
+ * Provides summary statistics and data for the admin dashboard.
  */
 
 session_start();
 
-// Admin authentication: Redirect to login if not logged in
+// Admin authentication
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
     header("Location: login.php");
     exit;
 }
 
-// Connect to the database
-include 'database/db_connection.php';
+// FIX: always resolve from this file's directory
+require_once(__DIR__ . '/../database/db_connection.php');
 
-// Get total number of pothole reports
-$totalReports = $conn->query("SELECT COUNT(*) as total FROM potholereport")->fetch_assoc()['total'];
+// Total reports
+$totalReports = $conn->query("SELECT COUNT(*) AS total FROM potholereport")->fetch_assoc()['total'] ?? 0;
 
-// Get report count grouped by status
+// NEW: real count for current month
+$reportsThisMonth = $conn->query("
+    SELECT COUNT(*) AS c
+    FROM potholereport
+    WHERE YEAR(Timestamp) = YEAR(CURDATE())
+      AND MONTH(Timestamp) = MONTH(CURDATE())
+")->fetch_assoc()['c'] ?? 0;
+
+// Status breakdown
 $statusData = [];
-$statusResult = $conn->query("SELECT Status, COUNT(*) as count FROM potholereport GROUP BY Status");
+$statusResult = $conn->query("SELECT Status, COUNT(*) AS count FROM potholereport GROUP BY Status");
 while ($row = $statusResult->fetch_assoc()) {
-    $statusData[$row['Status']] = $row['count'];
+    $statusData[$row['Status']] = (int)$row['count'];
 }
 
-// Get report count grouped by severity level
+// Severity breakdown
 $severityData = [];
-$severityResult = $conn->query("SELECT SeverityLevel, COUNT(*) as count FROM potholereport GROUP BY SeverityLevel");
+$severityResult = $conn->query("SELECT SeverityLevel, COUNT(*) AS count FROM potholereport GROUP BY SeverityLevel");
 while ($row = $severityResult->fetch_assoc()) {
-    $severityData[$row['SeverityLevel']] = $row['count'];
+    $severityData[$row['SeverityLevel']] = (int)$row['count'];
 }
 
-// Get top 5 users by number of report submissions
-$topUsers = $conn->query("SELECT u.Name, COUNT(p.ReportID) as totalReports 
+// Top users (by report submissions)
+$topUsers = $conn->query("
+    SELECT u.Name, COUNT(p.ReportID) AS totalReports 
     FROM user u 
     JOIN potholereport p ON u.UserID = p.UserID 
     GROUP BY u.UserID 
-    ORDER BY totalReports DESC LIMIT 5");
+    ORDER BY totalReports DESC 
+    LIMIT 5
+");
 
-// Get 5 most recent pothole reports
-$latestReports = $conn->query("SELECT p.ReportID, p.Description, p.Status, p.ImageURL, u.Name 
+// Latest reports
+$latestReports = $conn->query("
+    SELECT p.ReportID, p.Description, p.Status, p.ImageURL, u.Name 
     FROM potholereport p 
     JOIN user u ON p.UserID = u.UserID 
-    ORDER BY p.Timestamp DESC LIMIT 5");
+    ORDER BY p.Timestamp DESC 
+    LIMIT 5
+");
+
+// Top 5 provinces by report count and percentage
+$provinceStats = [];
+$provinceResult = $conn->query("
+    SELECT Province, COUNT(*) AS reportCount
+    FROM potholereport
+    GROUP BY Province
+    ORDER BY reportCount DESC
+    LIMIT 5
+");
+$totalReportsFloat = $totalReports > 0 ? $totalReports : 1; // avoid division by zero
+while ($row = $provinceResult->fetch_assoc()) {
+    $row['percent'] = round(($row['reportCount'] / $totalReportsFloat) * 100, 1);
+    $provinceStats[] = $row;
+}

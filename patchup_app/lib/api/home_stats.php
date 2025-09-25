@@ -1,11 +1,11 @@
 <?php
 
 /**
- * API endpoint to fetch home page statistics.
+ * Fetch home page statistics.
  * Returns total users, average reports per day, and number of potholes resolved.
  */
 
-// Set response type to JSON
+// Set response type and connect to database
 header("Content-Type: application/json");
 require_once("../database/db_connection.php");
 
@@ -43,5 +43,5 @@ echo json_encode([
     "potholes_resolved" => $potholesResolved
 ]);
 
-// Close the database connection
+// Close database connection
 $conn->close();
