@@ -64,6 +64,77 @@ PatchUp empowers Sri Lankan citizens to improve road infrastructure through seam
 - Mobile device (Android/iOS) for citizen app
 - Web browser for authority dashboard
 - Internet connection (offline sync available)
+- **XAMPP** for local development environment
+
+### Development Setup
+
+#### 1. XAMPP Installation & Configuration
+
+**Download & Install XAMPP**
+
+- Download XAMPP from [https://www.apachefriends.org/download.html](https://www.apachefriends.org/download.html)
+- Install XAMPP on your local machine
+- Start Apache and MySQL services from XAMPP Control Panel
+
+**Project Setup**
+
+1. Navigate to your XAMPP installation directory (usually `C:\xampp\htdocs\`)
+2. Place both the **mobile app** and **website** folders inside the `htdocs` directory
+3. Your folder structure should look like:
+   ```
+   C:\xampp\htdocs\
+   ├── patchup-app/          (Mobile app files)
+   ├── patchup-website/      (Website files)
+   └── ...other projects
+   ```
+
+#### 2. Database Configuration
+
+**Create Database**
+
+1. Open your web browser and go to `http://localhost/phpmyadmin`
+2. Click "New" to create a new database
+3. Name the database: `patchup`
+4. Click "Create"
+
+**Import Database Structure**
+
+1. Select the newly created `patchup` database
+2. Click on the "Import" tab
+3. Click "Choose File" and select `Xampp Database.sql` from the project files
+4. Click "Go" to import the database structure and initial data
+
+#### 3. IP Address Configuration
+
+**Find Your Local IP Address**
+
+_Windows:_
+
+```cmd
+ipconfig
+```
+
+Look for "IPv4 Address" under your active network connection
+
+_Mac/Linux:_
+
+```bash
+ifconfig
+```
+
+Look for your network interface IP address
+
+**Configure Mobile App**
+
+- The mobile app requires your local IP address to communicate with the XAMPP server
+- Replace `192.168.8.187` references in the mobile app configuration files with your actual IP address
+- **Current IP Address**: `192.168.8.187`
+- Example: Use `http://192.168.8.187/patchup-app/`
+- This ensures the mobile app can communicate with the local server from different devices on the same network
+
+> ⚠️ **Important:** When testing the mobile app on your device, make sure both your development machine (running XAMPP) and your mobile device are connected to the same WiFi network.
+
+> ⚠️ **Note:** The website dashboard doesn't need Ip Address.
 
 ### Installation
 
