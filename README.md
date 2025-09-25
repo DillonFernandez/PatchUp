@@ -18,7 +18,7 @@
 
 PatchUp empowers Sri Lankan citizens to improve road infrastructure through seamless pothole reporting while providing local authorities with efficient management tools to prioritize and resolve issues.
 
-> **📚 Academic Project:** This project is developed as part of the Commercial Computing Second Year curriculum at APIIT Sri Lanka.
+> **Academic Project:** This project is developed as part of the Commercial Computing Second Year curriculum at APIIT Sri Lanka.
 
 ---
 
@@ -28,7 +28,7 @@ PatchUp empowers Sri Lankan citizens to improve road infrastructure through seam
 <tr>
 <td width="33%">
 
-### 📱 **Citizen App**
+### **Citizen App**
 
 - One-tap reporting with GPS auto-location
 - Photo capture with metadata
@@ -41,7 +41,7 @@ PatchUp empowers Sri Lankan citizens to improve road infrastructure through seam
 </td>
 <td width="33%">
 
-### 🖥️ **Authority Dashboard**
+### **Authority Dashboard**
 
 - Real-time report management
 - Priority assignment and status updates
@@ -53,7 +53,7 @@ PatchUp empowers Sri Lankan citizens to improve road infrastructure through seam
 </td>
 <td width="33%">
 
-### 🔧 **Smart Features**
+### **Smart Features**
 
 - Duplicate prevention system
 - Push notifications
@@ -71,15 +71,15 @@ PatchUp empowers Sri Lankan citizens to improve road infrastructure through seam
 
 ### Prerequisites
 
-- 📱 Mobile device (Android/iOS) for citizen app
-- 🌐 Web browser for authority dashboard
-- 🌍 Internet connection (offline sync available)
-- ⚙️ **XAMPP** for local development environment
+- Mobile device (Android/iOS) for citizen app
+- Web browser for authority dashboard
+- Internet connection (offline sync available)
+- **XAMPP** for local development environment
 
-### 🛠️ Development Setup
+### Development Setup
 
 <details>
-<summary><strong>1️⃣ XAMPP Installation & Configuration</strong></summary>
+<summary><strong>XAMPP Installation & Configuration</strong></summary>
 
 #### Download & Install XAMPP
 
@@ -102,7 +102,7 @@ PatchUp empowers Sri Lankan citizens to improve road infrastructure through seam
 </details>
 
 <details>
-<summary><strong>2️⃣ Database Configuration</strong></summary>
+<summary><strong>Database Configuration</strong></summary>
 
 #### Create Database
 
@@ -121,7 +121,7 @@ PatchUp empowers Sri Lankan citizens to improve road infrastructure through seam
 </details>
 
 <details>
-<summary><strong>3️⃣ IP Address Configuration</strong></summary>
+<summary><strong>IP Address Configuration</strong></summary>
 
 #### Find Your Local IP Address
 
@@ -149,9 +149,9 @@ Look for your network interface IP address
 - Example: Use `http://192.168.8.187/patchup-app/`
 - This ensures the mobile app can communicate with the local server from different devices on the same network
 
-> ⚠️ **Important:** When testing the mobile app on your device, make sure both your development machine (running XAMPP) and your mobile device are connected to the same WiFi network.
+> **Important:** When testing the mobile app on your device, make sure both your development machine (running XAMPP) and your mobile device are connected to the same WiFi network.
 
-> ⚠️ **Note:** The website dashboard doesn't need Ip Address.
+> **Note:** The website dashboard doesn't need Ip Address.
 
 </details>
 
@@ -163,7 +163,7 @@ Look for your network interface IP address
 <tr>
 <td width="50%">
 
-### **For Citizens** 👥
+### **For Citizens**
 
 1. **Spot** a pothole during daily commute
 2. **Open** PatchUp mobile app
@@ -175,7 +175,7 @@ Look for your network interface IP address
 </td>
 <td width="50%">
 
-### **For Authorities** 🏛️
+### **For Authorities**
 
 1. **Receive** real-time report notifications
 2. **Assess** reports on management dashboard
@@ -193,7 +193,7 @@ Look for your network interface IP address
 ## 🗺️ Development Roadmap
 
 <details>
-<summary><strong>✅ Phase 1: Foundation (Completed)</strong></summary>
+<summary><strong>Phase 1: Foundation (Completed)</strong></summary>
 
 #### Authentication System
 
@@ -214,7 +214,7 @@ Look for your network interface IP address
 </details>
 
 <details>
-<summary><strong>✅ Phase 2: Intelligence & Management (Completed)</strong></summary>
+<summary><strong>Phase 2: Intelligence & Management (Completed)</strong></summary>
 
 #### Visual Intelligence
 
@@ -237,7 +237,7 @@ Look for your network interface IP address
 </details>
 
 <details>
-<summary><strong>✅ Phase 3: Community & Engagement (Completed)</strong></summary>
+<summary><strong>Phase 3: Community & Engagement (Completed)</strong></summary>
 
 #### Community Confirmation
 
@@ -260,7 +260,7 @@ Look for your network interface IP address
 </details>
 
 <details>
-<summary><strong>✅ Phase 4: Final Validation & Profile Management (Completed)</strong></summary>
+<summary><strong>Phase 4: Final Validation & Profile Management (Completed)</strong></summary>
 
 #### Duplicate Prevention System
 
@@ -289,34 +289,34 @@ Look for your network interface IP address
 
 ### Test Credentials
 
-| Platform             | User Type   | Credentials                                                                               |
+| Platform | User Type | Credentials |
 | -------------------- | ----------- | ----------------------------------------------------------------------------------------- |
-| 📱 **Mobile App**    | Citizens    | **Email:** `dillon@gmail.com`<br>**Password:** `TestUser@1`                               |
-| 🖥️ **Web Dashboard** | Authorities | **Name:** `Dillon Fernandez`<br>**Email:** `dillon@gmail.com`<br>**Password:** `Dillon@1` |
+| **Mobile App**    | Citizens    | **Email:** `dillon@gmail.com`<br>**Password:** `TestUser@1`                               |
+| **Web Dashboard** | Authorities | **Name:** `Dillon Fernandez`<br>**Email:** `dillon@gmail.com`<br>**Password:** `Dillon@1` |
 
-> ⚠️ **Note:** Testing credentials only - Not for production use
+> **Note:** Testing credentials only - Not for production use
 
 ---
 
 ## 📊 Platform Overview
 
-| Platform             | Target Users      | Availability     | Features                 |
+| Platform | Target Users | Availability | Features |
 | -------------------- | ----------------- | ---------------- | ------------------------ |
-| 📱 **Mobile App**    | Citizens          | Sri Lanka Wide   | Report, Track, Engage    |
-| 🖥️ **Web Dashboard** | Local Authorities | Internal Testing | Manage, Analyze, Respond |
+| **Mobile App**    | Citizens          | Sri Lanka Wide   | Report, Track, Engage    |
+| **Web Dashboard** | Local Authorities | Internal Testing | Manage, Analyze, Respond |
 
 ---
 
 ## 🔮 Future Vision
 
-### 🌍 Expansion Plans
+### Expansion Plans
 
 - **Geographic**: Scale beyond Sri Lanka to South Asian markets
 - **Technology**: Advanced AI for pothole detection & road assessment
 - **Community**: Enhanced gamification with rewards & recognition
 - **Analytics**: Predictive insights for infrastructure planning
 
-### 🚀 Upcoming Features
+### Upcoming Features
 
 - **AI-Powered Verification**: Automatic pothole validation
 - **Crowdsourced Road Ratings**: Community-based road condition index
@@ -329,8 +329,8 @@ Look for your network interface IP address
 
 <div align="center">
 
-**📧 Email:** support@patchup.lk  
-**📱 Phone:** +94 77 123 4567
+**Email:** support@patchup.lk  
+**Phone:** +94 77 123 4567
 
 ---
 
