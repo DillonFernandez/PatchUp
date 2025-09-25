@@ -1,36 +1,34 @@
-# PatchUp
-
 <div align="center">
-  <img src="patchup_website/images/Logo 1.webp" alt="PatchUp Logo" height="80"/>
+  <img src="patchup_website/images/Logo 1.webp" alt="PatchUp Logo" height="100"/>
+  
+  # PatchUp
   
   **Smart Pothole Reporting & Management Platform for Sri Lanka**
   
-  ![Status](https://img.shields.io/badge/Status-Testing%20Phase-orange)
-  ![Location](https://img.shields.io/badge/Location-Sri%20Lanka-blue)
-  ![Platform](https://img.shields.io/badge/Platform-Mobile%20%7C%20Web-green)
+  [![Status](https://img.shields.io/badge/Status-Testing%20Phase-orange)](https://github.com)
+  [![Location](https://img.shields.io/badge/Location-Sri%20Lanka-blue)](https://github.com)
+  [![Platform](https://img.shields.io/badge/Platform-Mobile%20%7C%20Web-green)](https://github.com)
+  
+  *Making Sri Lankan roads safer, one pothole at a time* 🛣️✨
 </div>
 
-## Table of Contents
+---
 
-- [About](#about)
-- [Features](#features)
-- [Getting Started](#getting-started)
-- [Usage](#usage)
-- [Development Roadmap](#development-roadmap)
-- [Testing](#testing)
-- [Platform Overview](#platform-overview)
-- [Future Vision](#future-vision)
-- [Contact](#contact)
-
-## About
+## 📖 About
 
 PatchUp empowers Sri Lankan citizens to improve road infrastructure through seamless pothole reporting while providing local authorities with efficient management tools to prioritize and resolve issues.
 
-> **Academic Project:** This project is developed as part of the Commercial Computing Second Year curriculum at APIIT Sri Lanka.
+> **📚 Academic Project:** This project is developed as part of the Commercial Computing Second Year curriculum at APIIT Sri Lanka.
 
-## Features
+---
 
-### 📱 Citizen App
+## ✨ Features
+
+<table>
+<tr>
+<td width="33%">
+
+### 📱 **Citizen App**
 
 - One-tap reporting with GPS auto-location
 - Photo capture with metadata
@@ -40,7 +38,10 @@ PatchUp empowers Sri Lankan citizens to improve road infrastructure through seam
 - Community validation system
 - Gamification with points and achievements
 
-### 🖥️ Authority Dashboard
+</td>
+<td width="33%">
+
+### 🖥️ **Authority Dashboard**
 
 - Real-time report management
 - Priority assignment and status updates
@@ -49,7 +50,10 @@ PatchUp empowers Sri Lankan citizens to improve road infrastructure through seam
 - Progress tracking tools
 - Validated reports dashboard
 
-### 🔧 Smart Features
+</td>
+<td width="33%">
+
+### 🔧 **Smart Features**
 
 - Duplicate prevention system
 - Push notifications
@@ -57,26 +61,33 @@ PatchUp empowers Sri Lankan citizens to improve road infrastructure through seam
 - Real-time chat for each report
 - Advanced filtering and analytics
 
-## Getting Started
+</td>
+</tr>
+</table>
+
+---
+
+## 🚀 Getting Started
 
 ### Prerequisites
 
-- Mobile device (Android/iOS) for citizen app
-- Web browser for authority dashboard
-- Internet connection (offline sync available)
-- **XAMPP** for local development environment
+- 📱 Mobile device (Android/iOS) for citizen app
+- 🌐 Web browser for authority dashboard
+- 🌍 Internet connection (offline sync available)
+- ⚙️ **XAMPP** for local development environment
 
-### Development Setup
+### 🛠️ Development Setup
 
-#### 1. XAMPP Installation & Configuration
+<details>
+<summary><strong>1️⃣ XAMPP Installation & Configuration</strong></summary>
 
-**Download & Install XAMPP**
+#### Download & Install XAMPP
 
 - Download XAMPP from [https://www.apachefriends.org/download.html](https://www.apachefriends.org/download.html)
 - Install XAMPP on your local machine
 - Start Apache and MySQL services from XAMPP Control Panel
 
-**Project Setup**
+#### Project Setup
 
 1. Navigate to your XAMPP installation directory (usually `C:\xampp\htdocs\`)
 2. Place both the **mobile app** and **website** folders inside the `htdocs` directory
@@ -88,27 +99,33 @@ PatchUp empowers Sri Lankan citizens to improve road infrastructure through seam
    └── ...other projects
    ```
 
-#### 2. Database Configuration
+</details>
 
-**Create Database**
+<details>
+<summary><strong>2️⃣ Database Configuration</strong></summary>
+
+#### Create Database
 
 1. Open your web browser and go to `http://localhost/phpmyadmin`
 2. Click "New" to create a new database
 3. Name the database: `patchup`
 4. Click "Create"
 
-**Import Database Structure**
+#### Import Database Structure
 
 1. Select the newly created `patchup` database
 2. Click on the "Import" tab
 3. Click "Choose File" and select `Xampp Database.sql` from the project files
 4. Click "Go" to import the database structure and initial data
 
-#### 3. IP Address Configuration
+</details>
 
-**Find Your Local IP Address**
+<details>
+<summary><strong>3️⃣ IP Address Configuration</strong></summary>
 
-_Windows:_
+#### Find Your Local IP Address
+
+**Windows:**
 
 ```cmd
 ipconfig
@@ -116,7 +133,7 @@ ipconfig
 
 Look for "IPv4 Address" under your active network connection
 
-_Mac/Linux:_
+**Mac/Linux:**
 
 ```bash
 ifconfig
@@ -124,7 +141,7 @@ ifconfig
 
 Look for your network interface IP address
 
-**Configure Mobile App**
+#### Configure Mobile App
 
 - The mobile app requires your local IP address to communicate with the XAMPP server
 - Replace `192.168.8.187` references in the mobile app configuration files with your actual IP address
@@ -136,13 +153,17 @@ Look for your network interface IP address
 
 > ⚠️ **Note:** The website dashboard doesn't need Ip Address.
 
-### Installation
+</details>
 
-_Installation instructions will be added when the app is publicly available_
+---
 
-## Usage
+## 📱 Usage
 
-### For Citizens
+<table>
+<tr>
+<td width="50%">
+
+### **For Citizens** 👥
 
 1. **Spot** a pothole during daily commute
 2. **Open** PatchUp mobile app
@@ -151,7 +172,10 @@ _Installation instructions will be added when the app is publicly available_
 5. **Track** progress through dashboard
 6. **Engage** with community & earn points
 
-### For Authorities
+</td>
+<td width="50%">
+
+### **For Authorities** 🏛️
 
 1. **Receive** real-time report notifications
 2. **Assess** reports on management dashboard
@@ -160,106 +184,130 @@ _Installation instructions will be added when the app is publicly available_
 5. **Communicate** directly with reporters
 6. **Monitor** progress through analytics
 
-## Development Roadmap
+</td>
+</tr>
+</table>
 
-### ✅ Phase 1: Foundation (Completed)
+---
 
-**Authentication System**
+## 🗺️ Development Roadmap
+
+<details>
+<summary><strong>✅ Phase 1: Foundation (Completed)</strong></summary>
+
+#### Authentication System
 
 - Secure user registration & login
 - Session management & data sync
 
-**Location Services**
+#### Location Services
 
 - GPS integration for precise coordinates
 - Location-based report mapping
 
-**Basic Reporting**
+#### Basic Reporting
 
 - Photo capture with metadata
 - Description and severity input
 - Instant submission workflow
 
-### ✅ Phase 2: Intelligence & Management (Completed)
+</details>
 
-**Visual Intelligence**
+<details>
+<summary><strong>✅ Phase 2: Intelligence & Management (Completed)</strong></summary>
+
+#### Visual Intelligence
 
 - Interactive map with real-time updates
 - Heatmap showing pothole density
 - Advanced filtering by status & severity
 
-**Smart Operations**
+#### Smart Operations
 
 - Offline reporting with auto-sync
 - Push notifications for updates
 - Multilingual support (Sinhala, Tamil, English)
 
-**Authority Platform**
+#### Authority Platform
 
 - Dedicated municipal dashboard
 - Report status management
 - Progress tracking tools
 
-### ✅ Phase 3: Community & Engagement (Completed)
+</details>
 
-**Community Confirmation**
+<details>
+<summary><strong>✅ Phase 3: Community & Engagement (Completed)</strong></summary>
+
+#### Community Confirmation
 
 - Upvote system for report confirmation
 - Community-driven prioritization
 - Crowdsourced accuracy improvement
 
-**Gamification Engine**
+#### Gamification Engine
 
 - Point system for active users
 - Achievement badges & milestones
 - Community leaderboards
 
-**Communication Hub**
+#### Communication Hub
 
 - Real-time chat for each report
 - Direct citizen-authority communication
 - Status update notifications
 
-### ✅ Phase 4: Final Validation & Profile Management (Completed)
+</details>
 
-**Duplicate Prevention System**
+<details>
+<summary><strong>✅ Phase 4: Final Validation & Profile Management (Completed)</strong></summary>
+
+#### Duplicate Prevention System
 
 - Smart location-based duplicate detection
 - Automatic validation when multiple users report same pothole
 - Prevention of duplicate reports from same user
 - Cross-user validation workflow
 
-**Profile Management**
+#### Profile Management
 
 - User profile editing capabilities
 - Personal dashboard with validated reports
 - User contribution tracking
 
-**Enhanced Authority Features**
+#### Enhanced Authority Features
 
 - Validated reports dashboard for authorities
 - Advanced report status management
 - Community validation insights
 
-## Testing
+</details>
+
+---
+
+## 🧪 Testing
 
 ### Test Credentials
 
-| Platform         | User Type   | Credentials                                                                   |
-| ---------------- | ----------- | ----------------------------------------------------------------------------- |
-| 📱 Mobile App    | Citizens    | Email: `dillon@gmail.com`<br>Password: `TestUser@1`                           |
-| 🖥️ Web Dashboard | Authorities | Name: `Dillon Fernandez`<br>Email: `dillon@gmail.com`<br>Password: `Dillon@1` |
+| Platform             | User Type   | Credentials                                                                               |
+| -------------------- | ----------- | ----------------------------------------------------------------------------------------- |
+| 📱 **Mobile App**    | Citizens    | **Email:** `dillon@gmail.com`<br>**Password:** `TestUser@1`                               |
+| 🖥️ **Web Dashboard** | Authorities | **Name:** `Dillon Fernandez`<br>**Email:** `dillon@gmail.com`<br>**Password:** `Dillon@1` |
 
 > ⚠️ **Note:** Testing credentials only - Not for production use
 
-## Platform Overview
+---
 
-| Platform         | Target Users      | Availability     | Features                 |
-| ---------------- | ----------------- | ---------------- | ------------------------ |
-| 📱 Mobile App    | Citizens          | Sri Lanka Wide   | Report, Track, Engage    |
-| 🖥️ Web Dashboard | Local Authorities | Internal Testing | Manage, Analyze, Respond |
+## 📊 Platform Overview
 
-## Future Vision
+| Platform             | Target Users      | Availability     | Features                 |
+| -------------------- | ----------------- | ---------------- | ------------------------ |
+| 📱 **Mobile App**    | Citizens          | Sri Lanka Wide   | Report, Track, Engage    |
+| 🖥️ **Web Dashboard** | Local Authorities | Internal Testing | Manage, Analyze, Respond |
+
+---
+
+## 🔮 Future Vision
 
 ### 🌍 Expansion Plans
 
@@ -275,15 +323,17 @@ _Installation instructions will be added when the app is publicly available_
 - **Advanced Analytics**: Infrastructure planning insights
 - **Reward System**: Partnership with local businesses
 
-## Contact
+---
 
-- **Email:** support@patchup.lk
-- **Phone:** +94 77 123 4567
+## 📞 Contact
+
+<div align="center">
+
+**📧 Email:** support@patchup.lk  
+**📱 Phone:** +94 77 123 4567
 
 ---
 
-<div align="center">
-  <em>Making Sri Lankan roads safer, one pothole at a time</em> 🛣️✨
-  
-  **© 2025 PatchUp. All rights reserved.**
+**© 2025 PatchUp. All rights reserved.**
+
 </div>
