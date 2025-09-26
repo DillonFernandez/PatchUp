@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 25, 2025 at 04:04 PM
+-- Generation Time: Sep 26, 2025 at 10:12 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -185,15 +185,16 @@ CREATE TABLE `notification` (
 --
 
 INSERT INTO `notification` (`NotificationID`, `UserID`, `ReportID`, `Title`, `Body`, `DataJSON`, `IsRead`, `CreatedAt`, `ReadAt`) VALUES
-(3, 1, 1, 'Pothole #1 validated', 'Ishara Rathnayake validated your pothole report.', '{\"type\": \"pothole_validation\", \"ValidationID\": 1, \"ReportID\": 1, \"ValidatorUserID\": 5, \"ValidatorName\": \"Ishara Rathnayake\", \"ValidatedAt\": \"2025-09-16 14:54:42\"}', 1, '2025-09-16 14:54:42', '2025-09-25 19:07:15'),
-(5, 1, 1, 'Pothole #1 validated', 'Tharindu Jayasuriya validated your pothole report.', '{\"type\": \"pothole_validation\", \"ValidationID\": 2, \"ReportID\": 1, \"ValidatorUserID\": 4, \"ValidatorName\": \"Tharindu Jayasuriya\", \"ValidatedAt\": \"2025-09-16 14:55:37\"}', 1, '2025-09-16 14:55:37', '2025-09-25 19:07:15'),
-(6, 1, 1, 'Pothole #1 validated', 'Hiranya Nirmal validated your pothole report.', '{\"type\": \"pothole_validation\", \"ValidationID\": 4, \"ReportID\": 1, \"ValidatorUserID\": 6, \"ValidatorName\": \"Hiranya Nirmal\", \"ValidatedAt\": \"2025-09-25 18:36:57\"}', 1, '2025-09-25 18:36:57', '2025-09-25 19:07:15'),
-(7, 1, 1, 'New message on Pothole #1', 'Dillon Fernandez | Admin commented: \"Your report is in the system. It has already been validated by two people.\"', '{\"type\": \"chat_message\", \"MessageID\": 2, \"ReportID\": 1, \"SenderUserID\": 7, \"IsAdmin\": 1, \"SenderName\": \"Dillon Fernandez\", \"SenderDisplayName\": \"Dillon Fernandez | Admin\", \"MessageText\": \"Your report is in the system. It has already been validated by two people.\", \"CreatedAt\": \"2025-09-25 19:03:58\"}', 1, '2025-09-25 19:03:58', '2025-09-25 19:07:15'),
-(8, 1, 1, 'New message on Pothole #1', 'Dillon Fernandez | Admin commented: \"With multiple validations, it is now in the queue for field inspection.\"', '{\"type\": \"chat_message\", \"MessageID\": 4, \"ReportID\": 1, \"SenderUserID\": 8, \"IsAdmin\": 1, \"SenderName\": \"Dillon Fernandez\", \"SenderDisplayName\": \"Dillon Fernandez | Admin\", \"MessageText\": \"With multiple validations, it is now in the queue for field inspection.\", \"CreatedAt\": \"2025-09-25 19:04:21\"}', 1, '2025-09-25 19:04:21', '2025-09-25 19:07:15'),
-(9, 1, 1, 'New message on Pothole #1', 'Dillon Fernandez | Admin commented: \"You will receive a notification once the inspection is completed.\"', '{\"type\": \"chat_message\", \"MessageID\": 6, \"ReportID\": 1, \"SenderUserID\": 9, \"IsAdmin\": 1, \"SenderName\": \"Dillon Fernandez\", \"SenderDisplayName\": \"Dillon Fernandez | Admin\", \"MessageText\": \"You will receive a notification once the inspection is completed.\", \"CreatedAt\": \"2025-09-25 19:04:58\"}', 1, '2025-09-25 19:04:58', '2025-09-25 19:07:15'),
-(10, 1, 1, 'New message on Pothole #1', 'Dillon Fernandez | Admin commented: \"The validation notification will show the names, but not their contact details.\"', '{\"type\": \"chat_message\", \"MessageID\": 9, \"ReportID\": 1, \"SenderUserID\": 10, \"IsAdmin\": 1, \"SenderName\": \"Dillon Fernandez\", \"SenderDisplayName\": \"Dillon Fernandez | Admin\", \"MessageText\": \"The validation notification will show the names, but not their contact details.\", \"CreatedAt\": \"2025-09-25 19:06:09\"}', 1, '2025-09-25 19:06:09', '2025-09-25 19:07:15'),
-(11, 1, 1, 'Pothole #1 status updated', 'Status changed from Reported to In Progress.', '{\"old_status\": \"Reported\", \"new_status\": \"In Progress\"}', 1, '2025-09-25 19:31:17', '2025-09-25 19:32:07'),
-(12, 1, 1, 'New message on Pothole #1', 'Hiranya Nirmal | Admin commented: \"Your report has been marked are in progress\"', '{\"type\": \"chat_message\", \"MessageID\": 11, \"ReportID\": 1, \"SenderUserID\": 11, \"IsAdmin\": 1, \"SenderName\": \"Hiranya Nirmal\", \"SenderDisplayName\": \"Hiranya Nirmal | Admin\", \"MessageText\": \"Your report has been marked are in progress\", \"CreatedAt\": \"2025-09-25 19:31:31\"}', 1, '2025-09-25 19:31:31', '2025-09-25 19:32:07');
+(1, 1, 1, 'Pothole #1 validated', 'Ishara Rathnayake validated your pothole report.', '{\"type\": \"pothole_validation\", \"ValidationID\": 1, \"ReportID\": 1, \"ValidatorUserID\": 5, \"ValidatorName\": \"Ishara Rathnayake\", \"ValidatedAt\": \"2025-09-16 14:54:42\"}', 1, '2025-09-16 14:54:42', '2025-09-25 19:07:15'),
+(2, 1, 1, 'Pothole #1 validated', 'Tharindu Jayasuriya validated your pothole report.', '{\"type\": \"pothole_validation\", \"ValidationID\": 2, \"ReportID\": 1, \"ValidatorUserID\": 4, \"ValidatorName\": \"Tharindu Jayasuriya\", \"ValidatedAt\": \"2025-09-16 14:55:37\"}', 1, '2025-09-16 14:55:37', '2025-09-25 19:07:15'),
+(3, 1, 1, 'Pothole #1 validated', 'Hiranya Nirmal validated your pothole report.', '{\"type\": \"pothole_validation\", \"ValidationID\": 4, \"ReportID\": 1, \"ValidatorUserID\": 6, \"ValidatorName\": \"Hiranya Nirmal\", \"ValidatedAt\": \"2025-09-25 18:36:57\"}', 1, '2025-09-25 18:36:57', '2025-09-25 19:07:15'),
+(4, 1, 1, 'New message on Pothole #1', 'Dillon Fernandez | Admin commented: \"Your report is in the system. It has already been validated by two people.\"', '{\"type\": \"chat_message\", \"MessageID\": 2, \"ReportID\": 1, \"SenderUserID\": 7, \"IsAdmin\": 1, \"SenderName\": \"Dillon Fernandez\", \"SenderDisplayName\": \"Dillon Fernandez | Admin\", \"MessageText\": \"Your report is in the system. It has already been validated by two people.\", \"CreatedAt\": \"2025-09-25 19:03:58\"}', 1, '2025-09-25 19:03:58', '2025-09-25 19:07:15'),
+(5, 1, 1, 'New message on Pothole #1', 'Dillon Fernandez | Admin commented: \"With multiple validations, it is now in the queue for field inspection.\"', '{\"type\": \"chat_message\", \"MessageID\": 4, \"ReportID\": 1, \"SenderUserID\": 8, \"IsAdmin\": 1, \"SenderName\": \"Dillon Fernandez\", \"SenderDisplayName\": \"Dillon Fernandez | Admin\", \"MessageText\": \"With multiple validations, it is now in the queue for field inspection.\", \"CreatedAt\": \"2025-09-25 19:04:21\"}', 1, '2025-09-25 19:04:21', '2025-09-25 19:07:15'),
+(6, 1, 1, 'New message on Pothole #1', 'Dillon Fernandez | Admin commented: \"You will receive a notification once the inspection is completed.\"', '{\"type\": \"chat_message\", \"MessageID\": 6, \"ReportID\": 1, \"SenderUserID\": 9, \"IsAdmin\": 1, \"SenderName\": \"Dillon Fernandez\", \"SenderDisplayName\": \"Dillon Fernandez | Admin\", \"MessageText\": \"You will receive a notification once the inspection is completed.\", \"CreatedAt\": \"2025-09-25 19:04:58\"}', 1, '2025-09-25 19:04:58', '2025-09-25 19:07:15'),
+(7, 1, 1, 'New message on Pothole #1', 'Dillon Fernandez | Admin commented: \"The validation notification will show the names, but not their contact details.\"', '{\"type\": \"chat_message\", \"MessageID\": 9, \"ReportID\": 1, \"SenderUserID\": 10, \"IsAdmin\": 1, \"SenderName\": \"Dillon Fernandez\", \"SenderDisplayName\": \"Dillon Fernandez | Admin\", \"MessageText\": \"The validation notification will show the names, but not their contact details.\", \"CreatedAt\": \"2025-09-25 19:06:09\"}', 1, '2025-09-25 19:06:09', '2025-09-25 19:07:15'),
+(8, 1, 1, 'Pothole #1 status updated', 'Status changed from Reported to In Progress.', '{\"old_status\": \"Reported\", \"new_status\": \"In Progress\"}', 1, '2025-09-25 19:31:17', '2025-09-26 13:23:54'),
+(9, 1, 1, 'New message on Pothole #1', 'Hiranya Nirmal | Admin commented: \"Your report has been marked are in progress\"', '{\"type\": \"chat_message\", \"MessageID\": 11, \"ReportID\": 1, \"SenderUserID\": 11, \"IsAdmin\": 1, \"SenderName\": \"Hiranya Nirmal\", \"SenderDisplayName\": \"Hiranya Nirmal | Admin\", \"MessageText\": \"Your report has been marked are in progress\", \"CreatedAt\": \"2025-09-25 19:31:31\"}', 1, '2025-09-25 19:31:31', '2025-09-26 13:23:54'),
+(10, 1, 1, 'Pothole #1 validated', 'Nadeesha Silva validated your pothole report.', '{\"type\": \"pothole_validation\", \"ValidationID\": 5, \"ReportID\": 1, \"ValidatorUserID\": 3, \"ValidatorName\": \"Nadeesha Silva\", \"ValidatedAt\": \"2025-09-26 13:34:42\"}', 0, '2025-09-26 13:34:42', NULL);
 
 -- --------------------------------------------------------
 
@@ -219,7 +220,8 @@ CREATE TABLE `potholereport` (
 --
 
 INSERT INTO `potholereport` (`ReportID`, `UserID`, `Description`, `SeverityLevel`, `ImageURL`, `Timestamp`, `Status`, `Province`, `Latitude`, `Longitude`) VALUES
-(1, 1, 'Small Pothole Near Kandana Station Road Food City', 'Small', '/patchup_app/uploads/img_68a2a2b8e1139_69d786b5-a9a8-47a2-a383-4aad6023585c6346341258487748645.jpg', '2025-09-16 14:52:40', 'In Progress', 'Western Province', 7.047527, 79.899396);
+(1, 1, 'Small Pothole Near Kandana Station Road Food City', 'Small', '/patchup_app/uploads/img_68a2a2b8e1139_69d786b5-a9a8-47a2-a383-4aad6023585c6346341258487748645.jpg', '2025-09-16 14:52:40', 'In Progress', 'Western Province', 7.047527, 79.899396),
+(2, 3, 'Moderate Pothole Near Kandana Station Road Temple', 'Moderate', '/patchup_app/uploads/img_68d649721f835_7cc3dd04-f719-4624-a20d-27d05f22f6038074854529183763235.jpg', '2025-09-26 13:36:10', 'Reported', 'Western Province', 7.047645, 79.899417);
 
 --
 -- Triggers `potholereport`
@@ -265,7 +267,7 @@ CREATE TABLE `pothole_validation` (
 INSERT INTO `pothole_validation` (`ValidationID`, `ReportID`, `UserID`, `Timestamp`) VALUES
 (1, 1, 5, '2025-09-16 14:54:42'),
 (2, 1, 4, '2025-09-16 14:55:37'),
-(4, 1, 6, '2025-09-25 18:36:57');
+(3, 1, 6, '2025-09-25 18:36:57');
 
 --
 -- Triggers `pothole_validation`
@@ -426,19 +428,19 @@ ALTER TABLE `chat_messages`
 -- AUTO_INCREMENT for table `notification`
 --
 ALTER TABLE `notification`
-  MODIFY `NotificationID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `NotificationID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `potholereport`
 --
 ALTER TABLE `potholereport`
-  MODIFY `ReportID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `ReportID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `pothole_validation`
 --
 ALTER TABLE `pothole_validation`
-  MODIFY `ValidationID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `ValidationID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `user`

@@ -9,9 +9,15 @@
 header("Content-Type: application/json");
 require_once("../database/db_connection.php");
 
-// Query total number of users
+// Query total number of users (ignore emails starting with 'admin')
 $totalUsers = 0;
-$res = $conn->query("SELECT COUNT(*) AS cnt FROM user");
+// Try with 'Email' column first, fallback to 'email' if needed
+$query = "SELECT COUNT(*) AS cnt FROM user WHERE IFNULL(Email, '') NOT LIKE 'admin%'";
+$res = $conn->query($query);
+if (!$res) {
+    $query = "SELECT COUNT(*) AS cnt FROM user WHERE IFNULL(email, '') NOT LIKE 'admin%'";
+    $res = $conn->query($query);
+}
 if ($res && $row = $res->fetch_assoc()) {
     $totalUsers = intval($row['cnt']);
 }

@@ -99,7 +99,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         // Handle password change if requested
         if (current.isNotEmpty && newPass.isNotEmpty && confirm.isNotEmpty) {
           final passUrl =
-              'http://192.168.1.2/patchup_app/lib/api/change_password.php';
+              'http://192.168.8.187/patchup_app/lib/api/change_password.php';
           final passResponse = await http.post(
             Uri.parse(passUrl),
             headers: {'Content-Type': 'application/json'},
