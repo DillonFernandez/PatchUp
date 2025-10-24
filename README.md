@@ -256,24 +256,6 @@ Look for your network interface IP address
 
 ---
 
-## 🔮 Future Vision
-
-### Expansion Plans
-
-- **Geographic**: Scale beyond Sri Lanka to South Asian markets
-- **Technology**: Advanced AI for pothole detection & road assessment
-- **Community**: Enhanced gamification with rewards & recognition
-- **Analytics**: Predictive insights for infrastructure planning
-
-### Upcoming Features
-
-- **AI-Powered Verification**: Automatic pothole validation
-- **Crowdsourced Road Ratings**: Community-based road condition index
-- **Advanced Analytics**: Infrastructure planning insights
-- **Reward System**: Partnership with local businesses
-
----
-
 ## 📞 Contact
 
 <div align="center">
