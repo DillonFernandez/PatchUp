@@ -14,7 +14,7 @@
 
 ---
 
-## 📖 About
+## About
 
 PatchUp empowers Sri Lankan citizens to improve road infrastructure through seamless pothole reporting while providing local authorities with efficient management tools to prioritize and resolve issues.
 
@@ -22,7 +22,7 @@ PatchUp empowers Sri Lankan citizens to improve road infrastructure through seam
 
 ---
 
-## ✨ Features
+## Features
 
 | **Citizen App**                                | **Authority Dashboard**                | **Smart Features**                      |
 | ---------------------------------------------- | -------------------------------------- | --------------------------------------- |
@@ -36,7 +36,7 @@ PatchUp empowers Sri Lankan citizens to improve road infrastructure through seam
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -126,7 +126,7 @@ Look for your network interface IP address
 
 ---
 
-## 📱 Usage
+## Usage
 
 | **For Citizens**                        | **For Authorities**                                  |
 | --------------------------------------- | ---------------------------------------------------- |
@@ -139,7 +139,7 @@ Look for your network interface IP address
 
 ---
 
-## 🗺️ Development Roadmap
+## Development Roadmap
 
 <details>
 <summary><strong>Phase 1: Foundation (Completed)</strong></summary>
@@ -234,7 +234,7 @@ Look for your network interface IP address
 
 ---
 
-## 🧪 Testing
+## Testing
 
 ### Test Credentials
 
@@ -247,7 +247,7 @@ Look for your network interface IP address
 
 ---
 
-## 📊 Platform Overview
+## Platform Overview
 
 | Platform          | Target Users      | Availability     | Features                 |
 | ----------------- | ----------------- | ---------------- | ------------------------ |
@@ -256,7 +256,7 @@ Look for your network interface IP address
 
 ---
 
-## 📞 Contact
+## Contact
 
 <div align="center">
 
