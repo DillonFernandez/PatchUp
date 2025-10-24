@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="patchup_website/images/Logo 1.webp" alt="PatchUp Logo" height="200"/>
+  <img src="patchup_website/images/Logo 1.webp" alt="PatchUp Logo" height="75"/>
   
   # PatchUp
   
