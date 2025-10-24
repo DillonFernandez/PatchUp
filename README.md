@@ -22,6 +22,14 @@ PatchUp empowers Sri Lankan citizens to improve road infrastructure through seam
 
 ---
 
+## Tech Stack
+
+- Mobile App: Flutter (Dart) + PHP (API endpoints)
+- Website (Dashboard): PHP, JavaScript, CSS, Tailwind CSS
+- Backend & DB: MySQL (XAMPP)
+
+---
+
 ## Features
 
 | **Citizen App**                                | **Authority Dashboard**                | **Smart Features**                      |
@@ -119,7 +127,7 @@ Look for your network interface IP address
 
 > **Important:** When testing the mobile app on your device, make sure both your development machine (running XAMPP) and your mobile device are connected to the same WiFi network.
 
-> **Note:** The website dashboard doesn't need Ip Address.
+> **Note:** The website dashboard doesn't need IP address configuration.
 
 </details>
 
