@@ -32,7 +32,6 @@ PatchUp empowers Sri Lankan citizens to improve road infrastructure through seam
 | Multilingual support (Sinhala, Tamil, English) | Direct communication with citizens     | Real-time chat for each report          |
 | Offline reporting with auto-sync               | Progress tracking tools                | Advanced filtering and analytics        |
 | Community validation system                    | Validated reports dashboard            |                                         |
-| Gamification with points and achievements      |                                        |                                         |
 
 ---
 
@@ -135,7 +134,7 @@ Look for your network interface IP address
 | **Capture** photo with auto GPS tagging | **Prioritize** using community validation & severity |
 | **Submit** with severity & description  | **Assign** teams and update status                   |
 | **Track** progress through dashboard    | **Communicate** directly with reporters              |
-| **Engage** with community & earn points | **Monitor** progress through analytics               |
+| **Engage** with community               | **Monitor** progress through analytics               |
 
 ---
 
@@ -193,12 +192,6 @@ Look for your network interface IP address
 - Upvote system for report confirmation
 - Community-driven prioritization
 - Crowdsourced accuracy improvement
-
-#### Gamification Engine
-
-- Point system for active users
-- Achievement badges & milestones
-- Community leaderboards
 
 #### Communication Hub
 
