@@ -257,15 +257,15 @@ Look for your network interface IP address
 
 ---
 
-## Contact
+## Contact Information
 
-<div align="center">
-
-**Email:** support@patchup.lk  
-**Phone:** +94 77 123 4567
+**Developer**: Dillon Fernandez  
+**Email**: dillonfernandez@gmail.com  
+**Institution**: APIIT
 
 ---
 
-**© 2025 PatchUp. All rights reserved.**
-
+<div align="center">
+  <p><strong>Disclaimer</strong></p>
+  <p><em>This is an academic project developed for educational purposes and is not intended for commercial use.</em></p>
 </div>
