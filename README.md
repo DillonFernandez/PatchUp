@@ -5,10 +5,10 @@
 
 **A citizen pothole-reporting mobile app and authority management dashboard for Sri Lanka**
 
-![Flutter SDK 3.27 or newer](https://img.shields.io/badge/Flutter_SDK-%E2%89%A53.27.0-02569B?style=flat-square&logo=flutter&logoColor=white)
-![Dart 3.7.2 to 3.x](https://img.shields.io/badge/Dart-%E2%89%A53.7.2-0175C2?style=flat-square&logo=dart&logoColor=white)
-![PHP 8.2](https://img.shields.io/badge/PHP-8.2-777BB4?style=flat-square&logo=php&logoColor=white)
-![MariaDB 10.4.32](https://img.shields.io/badge/MariaDB-10.4.32-003545?style=flat-square&logo=mariadb&logoColor=white)
+![Flutter](https://img.shields.io/badge/Flutter-02569B?style=flat-square&logo=flutter&logoColor=white)
+![Dart](https://img.shields.io/badge/Dart-0175C2?style=flat-square&logo=dart&logoColor=white)
+![PHP](https://img.shields.io/badge/PHP-777BB4?style=flat-square&logo=php&logoColor=white)
+![MariaDB](https://img.shields.io/badge/MariaDB-003545?style=flat-square&logo=mariadb&logoColor=white)
 
 [Overview](#overview) &nbsp;•&nbsp; [Features](#features) &nbsp;•&nbsp; [Architecture](#architecture) &nbsp;•&nbsp; [Getting started](#getting-started) &nbsp;•&nbsp; [Testing](#testing) &nbsp;•&nbsp; [Limitations](#known-limitations)
 
