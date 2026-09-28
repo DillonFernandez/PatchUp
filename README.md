@@ -14,6 +14,10 @@
 
 </div>
 
+---
+
+## Overview
+
 PatchUp is an academic road-maintenance reporting system with two user-facing applications:
 
 - A **Flutter citizen app** for capturing geotagged pothole reports, browsing community reports, viewing heatmaps, tracking report status, receiving in-app notifications, and talking to administrators about a submitted report.
