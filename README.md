@@ -5,11 +5,10 @@
 
 **A citizen pothole-reporting mobile app and authority management dashboard for Sri Lanka**
 
-![Flutter SDK 3.27 or newer](https://img.shields.io/badge/Flutter_SDK-%E2%89%A53.27.0-02569B?style=flat-square&logo=flutter&logoColor=white)
-![Dart 3.7.2 to 3.x](https://img.shields.io/badge/Dart-%E2%89%A53.7.2-0175C2?style=flat-square&logo=dart&logoColor=white)
-![PHP 8.2](https://img.shields.io/badge/PHP-8.2-777BB4?style=flat-square&logo=php&logoColor=white)
-![MariaDB 10.4.32](https://img.shields.io/badge/MariaDB-10.4.32-003545?style=flat-square&logo=mariadb&logoColor=white)
-![Version 1.0.0+1](https://img.shields.io/badge/version-1.0.0%2B1-2F80ED?style=flat-square)
+![Flutter SDK 3.27 or newer](https://img.shields.io/badge/Flutter_SDK-%E2%89%A53.27.0-04274B?style=flat-square&logo=flutter&logoColor=white)
+![Dart 3.7.2 to 3.x](https://img.shields.io/badge/Dart-%E2%89%A53.7.2-04274B?style=flat-square&logo=dart&logoColor=white)
+![PHP 8.2](https://img.shields.io/badge/PHP-8.2-04274B?style=flat-square&logo=php&logoColor=white)
+![MariaDB 10.4.32](https://img.shields.io/badge/MariaDB-10.4.32-04274B?style=flat-square&logo=mariadb&logoColor=white)
 
 [Overview](#overview) &nbsp;•&nbsp; [Features](#features) &nbsp;•&nbsp; [Architecture](#architecture) &nbsp;•&nbsp; [Getting started](#getting-started) &nbsp;•&nbsp; [Testing](#testing) &nbsp;•&nbsp; [Limitations](#known-limitations)
 
@@ -335,7 +334,6 @@ Do not expose the current Apache endpoints publicly, use real credentials in the
 - Map tiles are not available offline; `flutter_map_tile_caching` is declared but not used by the application.
 - Notifications are database-backed and fetched by the app. The profile notification switch is not persisted or connected to notification delivery.
 - “Forgot Password?” is present in the login UI but has no action.
-- Admin login stores the administrator name but not `admin_email`; self-delete protection and stable admin-to-chat identity mapping therefore do not work as intended.
 - API origins, database settings, polling intervals, and workflow values are not centrally configurable.
 - The Android main manifest lacks the internet permission used by release builds, while debug/profile manifests include it; the current plain-HTTP transport also needs an explicit release policy.
 - The iOS `Info.plist` is malformed by an extra closing tag, does not declare camera/photo-library usage descriptions, and does not permit the current plain-HTTP development transport.
