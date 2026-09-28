@@ -352,6 +352,14 @@ PatchUp was developed as a Level 5 Commercial Computing group project by:
 
 ---
 
+## Contact Information
+
+**Developer**: Dillon Fernandez<br>
+**Email**: dillonfernandez@gmail.com<br>
+**Institution**: APIIT
+
+---
+
 <div align="center">
   <p><strong>Disclaimer</strong></p>
   <p><em>This is an academic project developed for educational purposes and is not intended for commercial use.</em></p>
