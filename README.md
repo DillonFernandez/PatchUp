@@ -1,15 +1,16 @@
 <div align="center">
   <img src="patchup_website/images/Logo 1.webp" alt="PatchUp Logo" height="75"/>
 
-  # PatchUp
-  
-  **Smart Pothole Reporting & Management Platform for Sri Lanka**
-  
-  [![Status](https://img.shields.io/badge/Status-Testing%20Phase-orange)](https://github.com)
-  [![Location](https://img.shields.io/badge/Location-Sri%20Lanka-blue)](https://github.com)
-  [![Platform](https://img.shields.io/badge/Platform-Mobile%20%7C%20Web-green)](https://github.com)
-  
-  *Making Sri Lankan roads safer, one pothole at a time* 🛣️✨
+# PatchU
+
+**Smart Pothole Reporting & Management Platform for Sri Lanka**
+
+[![Status](https://img.shields.io/badge/Status-Testing%20Phase-orange)](https://github.com)
+[![Location](https://img.shields.io/badge/Location-Sri%20Lanka-blue)](https://github.com)
+[![Platform](https://img.shields.io/badge/Platform-Mobile%20%7C%20Web-green)](https://github.com)
+
+_Making Sri Lankan roads safer, one pothole at a time_ 🛣️✨
+
 </div>
 
 ---
