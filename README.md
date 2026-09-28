@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="patchup_website/images/Logo%201.webp" alt="PatchUp wordmark" width="460">
+  <img src="patchup_website/images/Logo%201.webp" alt="PatchUp wordmark" width="280">
 
 # PatchUp
 
