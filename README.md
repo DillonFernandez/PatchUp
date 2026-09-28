@@ -1,5 +1,7 @@
 <div align="center">
   <img src="patchup_website/images/Logo 1.webp" alt="PatchUp Logo" height="75"/>
+
+  # PatchUp
   
   **Smart Pothole Reporting & Management Platform for Sri Lanka**
   
